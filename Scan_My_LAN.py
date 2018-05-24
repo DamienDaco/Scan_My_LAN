@@ -14,6 +14,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         self.setupUi(self)
 
+        self.default_interface = get_default_interface()
+        self.my_mac = get_mac(self.default_interface)
+        self.my_ip = get_host_ip(self.default_interface)
+
+        print("Your default interface is {}, your IP is {} and your MAC is {}".format(self.default_interface, self.my_ip, self.my_mac))
+
 
 if __name__ == "__main__":
 
