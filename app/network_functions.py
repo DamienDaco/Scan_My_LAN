@@ -10,8 +10,8 @@ def get_default_interface():
 
 def get_mac(interface):
 
-    addr = netifaces.ifaddresses(interface)
-    mac = addr[netifaces.AF_LINK][0]['addr']
+    addrs = netifaces.ifaddresses(interface)
+    mac = addrs[netifaces.AF_LINK][0]['addr']
     return mac
 
 
@@ -31,6 +31,20 @@ def get_interfaces():
 
     interface_list = netifaces.interfaces()
     return interface_list
+
+
+def hex_mac(mac):
+
+    cleanmac = re.findall('[a-fA-F0-9]{2}', mac)
+    hexmac = [int(i, 16) for i in cleanmac]
+    return hexmac
+
+
+def decimal_ip(ip):
+
+    cleanip = re.findall('\d{1,3}', ip)
+    decimalip = [int(i) for i in cleanip]
+    return decimalip
 
 
 def build_arp_query(source_mac, source_ip, dest_ip):

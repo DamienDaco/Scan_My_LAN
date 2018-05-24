@@ -2,7 +2,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import *
 
-import sys
+from app.network_functions import *
 
 from ui.Scan_My_LAN import Ui_MainWindow
 
