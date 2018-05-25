@@ -53,6 +53,61 @@ def decimal_ip(ip):
     return decimalip
 
 
+def integer_to_dotted_decimal_ip(i):
+
+    i = '{0:032b}'.format(i)
+    decimal_ip = '.'.join(map(str, [int(i[:8], 2), int(i[8:16], 2), int(i[16:24], 2), int(i[24:32], 2)]))
+    return decimal_ip
+
+
+def calc_range(ip, mask):
+
+    broadcast = 4294967295                                      # This is the equivalent of 255.255.255.255
+
+    octets_ip = [int(i) for i in ip.split('.')]
+    string_ip = '{0:08b}{1:08b}{2:08b}{3:08b}'.format(*octets_ip)
+    int_ip = int(string_ip, 2)
+    octets_mask = [int(i) for i in mask.split('.')]
+    string_mask = '{0:08b}{1:08b}{2:08b}{3:08b}'.format(*octets_mask)
+
+    host_bits = len(bin(broadcast ^ int(string_mask, 2))) - 2
+    '''
+    Explanation on the previous line of code:
+    We have to perform an XOR operation with '^' to compute the number of host bits (The zeroes on the right of a network mask)
+    bin() returns a string like '0b11111111'
+    Len() will tell us the length of that string
+    We have to substract 2 because bin() prepends two chars '0b' before our string  
+    '''
+
+    print("Number of host bits: %d" % host_bits)
+
+    if host_bits > 1:
+        int_subnet_id = int_ip >> host_bits << host_bits
+        int_first_ip = int_subnet_id + 1
+        int_broadcast_ip = int_ip | 2**host_bits - 1
+        int_last_ip = int_broadcast_ip - 1
+
+        dotted_id, dotted_first_ip, dotted_last_ip, dotted_broadcast = map(integer_to_dotted_decimal_ip, [int_subnet_id, int_first_ip, int_last_ip, int_broadcast_ip])
+
+        print("Your network ID is %s" % dotted_id)
+        print("Your first IP is %s" % dotted_first_ip)
+        print("Your last IP is %s" % dotted_last_ip)
+        print("Your broadcast is %s" % dotted_broadcast)
+
+    if host_bits == 1:                                          # This is a very special case for /31 networks (e.g. Cisco routers). Probably useless but whatever?
+        int_first_ip = int_ip >> host_bits << host_bits
+        int_last_ip = int_first_ip + 1
+
+        dotted_first_ip, dotted_last_ip = map(integer_to_dotted_decimal_ip, [int_first_ip, int_last_ip])
+        print("Your first IP is %s" % dotted_first_ip)
+        print("Your last IP is %s" % dotted_last_ip)
+
+    if host_bits == 0:                                          # Another special case for /32 'networks'. Probably useless.
+        dotted_first_ip = integer_to_dotted_decimal_ip(int_ip)
+
+        print("Your IP is %s" % dotted_first_ip)
+
+
 def build_arp_query(source_mac, source_ip, dest_ip):
 
     broadcast_mac = [0xFF] * 6
