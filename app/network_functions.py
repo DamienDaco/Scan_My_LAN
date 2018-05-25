@@ -21,6 +21,12 @@ def get_host_ip(interface):
     return ip
 
 
+def get_host_mask(interface):
+
+    mask = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['netmask']
+    return mask
+
+
 def get_gateway():
 
     gateway = netifaces.gateways()['default'][netifaces.AF_INET][0]
