@@ -70,7 +70,7 @@ def calc_range(ip, mask):
     octets_mask = [int(i) for i in mask.split('.')]
     string_mask = '{0:08b}{1:08b}{2:08b}{3:08b}'.format(*octets_mask)
 
-    host_bits = len(bin(broadcast ^ int(string_mask, 2))) - 2
+    host_bits = bin(broadcast ^ int(string_mask, 2)).count('1')
     '''
     Explanation on the previous line of code:
     We have to perform an XOR operation with '^' to compute the number of host bits (The zeroes on the right of a network mask)
