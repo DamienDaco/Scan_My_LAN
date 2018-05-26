@@ -69,7 +69,7 @@ def calc_range(ip, mask):
     int_ip = int(string_ip, 2)
     octets_mask = [int(i) for i in mask.split('.')]
     string_mask = '{0:08b}{1:08b}{2:08b}{3:08b}'.format(*octets_mask)
-
+    int_mask = int(string_mask, 2)
     host_bits = bin(broadcast ^ int(string_mask, 2)).count('1')
     '''
     Explanation on the previous line of code:
@@ -82,9 +82,9 @@ def calc_range(ip, mask):
     print("Number of host bits: %d" % host_bits)
 
     if host_bits > 1:
-        int_subnet_id = int_ip >> host_bits << host_bits
+        int_subnet_id = int_ip & int_mask
         int_first_ip = int_subnet_id + 1
-        int_broadcast_ip = int_ip | 2**host_bits - 1
+        int_broadcast_ip = broadcast ^ int_mask | int_ip
         int_last_ip = int_broadcast_ip - 1
 
         dotted_id, dotted_first_ip, dotted_last_ip, dotted_broadcast = map(integer_to_dotted_decimal_ip, [int_subnet_id, int_first_ip, int_last_ip, int_broadcast_ip])
