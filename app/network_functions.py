@@ -62,7 +62,7 @@ def integer_to_dotted_decimal_ip(i):
 
 def calc_range(ip, mask):
 
-    broadcast = 4294967295                                      # This is the equivalent of 255.255.255.255
+    broadcast = 0b11111111111111111111111111111111               # This is the equivalent of 255.255.255.255
 
     octets_ip = [int(i) for i in ip.split('.')]
     string_ip = '{0:08b}{1:08b}{2:08b}{3:08b}'.format(*octets_ip)
@@ -87,7 +87,8 @@ def calc_range(ip, mask):
         int_broadcast_ip = broadcast ^ int_mask | int_ip
         int_last_ip = int_broadcast_ip - 1
 
-        dotted_id, dotted_first_ip, dotted_last_ip, dotted_broadcast = map(integer_to_dotted_decimal_ip, [int_subnet_id, int_first_ip, int_last_ip, int_broadcast_ip])
+        dotted_id, dotted_first_ip, dotted_last_ip, dotted_broadcast = map(
+            integer_to_dotted_decimal_ip, [int_subnet_id, int_first_ip, int_last_ip, int_broadcast_ip])
 
         print("Your network ID is %s" % dotted_id)
         print("Your first IP is %s" % dotted_first_ip)
@@ -95,7 +96,7 @@ def calc_range(ip, mask):
         print("Your broadcast is %s" % dotted_broadcast)
 
     if host_bits == 1:                                          # This is a very special case for /31 networks (e.g. Cisco routers). Probably useless but whatever?
-        int_first_ip = int_ip >> host_bits << host_bits
+        int_first_ip = int_ip & int_mask
         int_last_ip = int_first_ip + 1
 
         dotted_first_ip, dotted_last_ip = map(integer_to_dotted_decimal_ip, [int_first_ip, int_last_ip])
