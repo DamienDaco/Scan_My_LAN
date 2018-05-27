@@ -95,6 +95,8 @@ def calc_range(ip, mask):
         print("Your last IP is %s" % dotted_last_ip)
         print("Your broadcast is %s" % dotted_broadcast)
 
+        return int_first_ip, int_last_ip
+
     if host_bits == 1:                                          # This is a very special case for /31 networks (e.g. Cisco routers). Probably useless but whatever?
         int_first_ip = int_ip & int_mask
         int_last_ip = int_first_ip + 1
@@ -113,7 +115,7 @@ def build_arp_query(source_mac, source_ip, dest_ip):
 
     broadcast_mac = [0xFF] * 6
     arp_frame = struct.pack('!6B6BH', *[*broadcast_mac, *source_mac, 0x0806])
-    arp_packet = struct.pack('!HHBBH6B4B6B4B', *[0x0001, 0x0800, 0x06, 0x04, 0x0001, *source_mac, *source_ip, *broadcast_mac, *dest_ip])
+    arp_packet = struct.pack('!HHBBH6B4B6BL', *[0x0001, 0x0800, 0x06, 0x04, 0x0001, *source_mac, *source_ip, *broadcast_mac, dest_ip])
     arp_query = arp_frame + arp_packet
 
     return arp_query
@@ -124,5 +126,4 @@ def send_data(iface, data):
     s = socket(AF_PACKET, SOCK_RAW)
     s.bind((iface, 0))
     s.send(data)
-
 

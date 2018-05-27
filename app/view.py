@@ -21,7 +21,7 @@ class View(QObject):
         pass
 
     def start_connections(self):
-        self.ui.start_button.clicked.connect(lambda: self.controller.calc_range())
+        self.ui.start_button.clicked.connect(lambda: self.controller.send_arp_queries())
 
     def start(self):
         pass
