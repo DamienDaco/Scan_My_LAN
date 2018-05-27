@@ -1,8 +1,8 @@
 from app.network_functions import *
-from app.mainwindow import MainWindow
+from app.view import MainWindow
 
 
-class Logic:
+class Model:
 
     def __init__(self):
         super().__init__()
