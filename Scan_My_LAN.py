@@ -1,7 +1,8 @@
 import sys
 from app.model import *
-from ui.Scan_My_LAN import *
+from ui.gui import *
 from app.view import *
+from app.controller import *
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtWidgets import QMainWindow
 
@@ -15,4 +16,6 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     model = Model()
+    view = View(ui, MainWindow)
+    controller = Controller(view, model)
     sys.exit(app.exec_())
