@@ -1,4 +1,5 @@
 from app.network_functions import *
+from app.multithreading import *
 # from app.view import MainWindow
 
 
@@ -20,7 +21,8 @@ class Model:
         # self.main_window.interface_box.addItems(self.interface_list)
         # self.main_window.interface_box.setCurrentText(self.default_interface)
 
-
-
         print("Your default interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
               self.default_interface, self.my_ip, self.my_mask, self.my_mac))
+
+
+

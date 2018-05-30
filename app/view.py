@@ -11,17 +11,18 @@ class View(QObject):
         self.ui = ui
         self.ui_mainwindow = ui_mainwindow
 
-        self.start_once()
-        self.start_connections()
+        # self.start_once()
+        # self.start_connections()
 
     def set_controller(self, controller):
         self.controller = controller
 
     def start_once(self):
-        pass
+        self.start_connections()
 
     def start_connections(self):
-        self.ui.start_button.clicked.connect(lambda: self.controller.send_arp_queries())
+        self.ui.start_button.clicked.connect(self.controller.start_query_thread)
+        self.ui.debug_button.clicked.connect(lambda: print("Test"))
 
     def start(self):
         pass
