@@ -3,8 +3,8 @@ from app.model import *
 from ui.gui import *
 from app.view import *
 from app.controller import *
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import *
+# from PyQt5.QtWidgets import
 
 
 if __name__ == "__main__":

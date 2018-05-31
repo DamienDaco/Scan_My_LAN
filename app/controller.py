@@ -13,12 +13,17 @@ class Controller:
         self.view.set_controller(self)
 
         self.view.start()
-        self.view.start_connections()
+        self.view.start_once()
         self.query_threads = []
 
     def calc_range(self):
 
         calc_range(self.model.my_ip, self.model.my_mask)
+
+    def update_interface_box(self):
+        iface = self.model.default_interface
+        iface_list = self.model.interface_list
+        return iface, iface_list
 
     def start_query_thread(self):
 

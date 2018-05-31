@@ -1,7 +1,4 @@
 from PyQt5.QtCore import *
-from app.network_functions import *
-
-from ui.gui import *
 
 
 class View(QObject):
@@ -11,14 +8,12 @@ class View(QObject):
         self.ui = ui
         self.ui_mainwindow = ui_mainwindow
 
-        # self.start_once()
-        # self.start_connections()
-
     def set_controller(self, controller):
         self.controller = controller
 
     def start_once(self):
         self.start_connections()
+        self.update_interface_box()
 
     def start_connections(self):
         self.ui.start_button.clicked.connect(self.controller.start_query_thread)
@@ -26,3 +21,8 @@ class View(QObject):
 
     def start(self):
         pass
+
+    def update_interface_box(self):
+        iface, iface_list = self.controller.update_interface_box()
+        self.ui.interface_box.addItems(iface_list)
+        self.ui.interface_box.setCurrentText(iface)
