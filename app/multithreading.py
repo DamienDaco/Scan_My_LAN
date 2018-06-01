@@ -28,3 +28,4 @@ class ArpQueryWorker(QObject):
     def stop(self):
 
         self.is_running = False
+
