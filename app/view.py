@@ -17,6 +17,7 @@ class View(QObject):
 
     def start_connections(self):
         self.ui.start_button.clicked.connect(self.controller.start_query_thread)
+        self.ui.start_button.clicked.connect(self.controller.start_arp_sniffer_thread)
         self.ui.debug_button.clicked.connect(lambda: print("Test"))
         self.ui.interface_box.currentIndexChanged.connect(self.controller.update_selected_interface)
 

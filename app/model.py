@@ -9,8 +9,9 @@ class Model:
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
         self.interface_list = get_interfaces()
-
         self.get_selected_interface_info()
+
+        self.host_list = []
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)

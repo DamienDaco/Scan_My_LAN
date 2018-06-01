@@ -127,3 +127,37 @@ def send_data(iface, data):
     s.bind((iface, 0))
     s.send(data)
 
+
+def sniff_arp(interface, host_list):
+    s = socket(AF_PACKET, SOCK_RAW, htons(0x0806))
+
+    # print("Capturing ARP replies on interface {}".format(interface))
+    s.bind((interface, 0))
+
+    try:
+        datagram = s.recvfrom(2048)
+
+        ethernet_header = datagram[0][0:14]
+        ethernet_unpacked = struct.unpack("!6s6s2s", ethernet_header)
+
+        arp_header = datagram[0][14:42]
+        arp_unpacked = struct.unpack("!2s2s1s1s2s6s4s6s4s", arp_header)
+
+        ip = inet_ntoa(arp_unpacked[6])
+        # Check for ARP replies only (code is 0x0002, or b'0002' in binary output
+        # if binascii.hexlify(arp_unpacked[4]) == b'0002':
+            # Check if the ip is already in our list:
+        if ip not in (i[0] for i in host_list):
+            print("inet_ntoa(arp_unpacked[6] is", inet_ntoa(arp_unpacked[6]))
+            remote_mac = binascii.hexlify(ethernet_unpacked[1])
+
+            print("MAC address of host {} is {}".format(ip, remote_mac.decode()))
+            host_list.append([ip, remote_mac.decode()])
+            print("List is", host_list)
+
+    except KeyboardInterrupt:
+        print("KeyboardInterrupt signal received, quitting", host_list)
+        sys.exit(0)
+
+    # print("ARP Sniffer Worker task complete")
+    return host_list

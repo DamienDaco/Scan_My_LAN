@@ -1,4 +1,5 @@
 from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
 from app.network_functions import *
 
 
@@ -29,3 +30,30 @@ class ArpQueryWorker(QObject):
 
         self.is_running = False
 
+
+class ArpReplySnifferWorker(QObject):
+    done_signal = pyqtSignal(object)
+
+    def __init__(self, interface, host_list):
+
+        super().__init__()
+        self.is_running = True
+        self.interface = interface
+        self.host_list = host_list
+
+        # self.done_signal.connect(ResultObj)
+        # self.done_signal.connect(TableModel.update)
+
+    def task(self):
+        print("Capturing ARP replies on interface {}".format(self.interface))
+
+        while self.is_running:
+
+            sniff_arp(self.interface, self.host_list)
+
+        self.done_signal.emit(self.host_list)
+
+    @pyqtSlot()
+    def stop(self):
+        print("Sniffer worker received stop signal")
+        self.is_running = False
