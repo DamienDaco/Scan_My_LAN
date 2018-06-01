@@ -8,17 +8,17 @@ class Model:
 
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
-        self.my_mac = get_mac(self.default_interface)
-        self.my_ip = get_host_ip(self.default_interface)
-        self.my_mask = get_host_mask(self.default_interface)
+        self.interface_list = get_interfaces()
+
+        self.get_selected_interface_info()
+
+    def get_selected_interface_info(self):
+        self.my_mac = get_mac(self.selected_interface)
+        self.my_ip = get_host_ip(self.selected_interface)
+        self.my_mask = get_host_mask(self.selected_interface)
 
         self.hex_mac = hex_mac(self.my_mac)
         self.decimal_ip = decimal_ip(self.my_ip)
-
-        self.interface_list = get_interfaces()
-
-        print("Your default interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
-              self.default_interface, self.my_ip, self.my_mask, self.my_mac))
 
 
 

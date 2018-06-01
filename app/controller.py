@@ -16,8 +16,13 @@ class Controller:
         self.view.start_once()
         self.query_threads = []
 
-    def calc_range(self):
+        self.print_selected_interface()
 
+    def print_selected_interface(self):
+        print("Your current interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
+              self.model.selected_interface, self.model.my_ip, self.model.my_mask, self.model.my_mac))
+
+    def calc_range(self):
         calc_range(self.model.my_ip, self.model.my_mask)
 
     def update_interface_box(self):
@@ -27,7 +32,8 @@ class Controller:
 
     def update_selected_interface(self):
         self.model.selected_interface = self.view.ui.interface_box.currentText()
-        print("Current interface is %s" % self.model.selected_interface)
+        self.model.get_selected_interface_info()
+        self.print_selected_interface()
 
     def start_query_thread(self):
 

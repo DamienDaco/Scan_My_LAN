@@ -12,8 +12,8 @@ class View(QObject):
         self.controller = controller
 
     def start_once(self):
-        self.start_connections()
         self.update_interface_box()
+        self.start_connections()
 
     def start_connections(self):
         self.ui.start_button.clicked.connect(self.controller.start_query_thread)
