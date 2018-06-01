@@ -25,6 +25,10 @@ class Controller:
         iface_list = self.model.interface_list
         return iface, iface_list
 
+    def update_selected_interface(self):
+        self.model.selected_interface = self.view.ui.interface_box.currentText()
+        print("Current interface is %s" % self.model.selected_interface)
+
     def start_query_thread(self):
 
         if len(self.query_threads) > 0:
@@ -39,10 +43,10 @@ class Controller:
             self.query_threads.append((self.query_worker, self.query_thread))
             self.query_worker.moveToThread(self.query_thread)
             self.query_thread.started.connect(self.query_worker.task)
-            self.query_worker.done_signal.connect(self.stop_thread)
+            self.query_worker.done_signal.connect(self.stop_query_thread)
             self.query_thread.start()
 
-    def stop_thread(self):
+    def stop_query_thread(self):
 
         if len(self.query_threads) > 0:  # Check if there's something in the list
             print("Sending stop signal to query_thread")

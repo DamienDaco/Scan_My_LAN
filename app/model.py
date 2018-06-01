@@ -9,6 +9,7 @@ class Model:
         super().__init__()
 
         self.default_interface = get_default_interface()
+        self.selected_interface = self.default_interface
         self.my_mac = get_mac(self.default_interface)
         self.my_ip = get_host_ip(self.default_interface)
         self.my_mask = get_host_mask(self.default_interface)
