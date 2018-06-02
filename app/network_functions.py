@@ -150,9 +150,11 @@ def sniff_arp(interface, host_list):
         if ip not in (i[0] for i in host_list):
             print("inet_ntoa(arp_unpacked[6] is", inet_ntoa(arp_unpacked[6]))
             remote_mac = binascii.hexlify(ethernet_unpacked[1])
+            decoded_mac = remote_mac.decode()
+            human_mac = ':'.join(decoded_mac[i:i+2] for i in range(0, len(decoded_mac), 2))
 
-            print("MAC address of host {} is {}".format(ip, remote_mac.decode()))
-            host_list.append([ip, remote_mac.decode()])
+            print("MAC address of host {} is {}".format(ip, human_mac))
+            host_list.append([ip, human_mac])
             print("List is", host_list)
 
     except KeyboardInterrupt:
