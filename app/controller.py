@@ -8,6 +8,11 @@ class Controller:
 
     def __init__(self, view, model):
 
+        self.default_interface = get_default_interface()
+        self.selected_interface = self.default_interface
+        self.interface_list = get_interfaces()
+        self.get_selected_interface_info()
+
         self.model = model
         self.view = view
         self.view.set_controller(self)
@@ -16,23 +21,32 @@ class Controller:
         self.view.start_once()
         self.query_threads = []
         self.arp_sniffer_thread_list = []
+
         self.print_selected_interface()
+
+    def get_selected_interface_info(self):
+        self.my_mac = get_mac(self.selected_interface)
+        self.my_ip = get_host_ip(self.selected_interface)
+        self.my_mask = get_host_mask(self.selected_interface)
+
+        self.hex_mac = hex_mac(self.my_mac)
+        self.decimal_ip = decimal_ip(self.my_ip)
 
     def print_selected_interface(self):
         print("Your current interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
-              self.model.selected_interface, self.model.my_ip, self.model.my_mask, self.model.my_mac))
+              self.selected_interface, self.my_ip, self.my_mask, self.my_mac))
 
     def calc_range(self):
-        calc_range(self.model.my_ip, self.model.my_mask)
+        calc_range(self.my_ip, self.my_mask)
 
     def update_interface_box(self):
-        iface = self.model.default_interface
-        iface_list = self.model.interface_list
+        iface = self.default_interface
+        iface_list = self.interface_list
         return iface, iface_list
 
     def update_selected_interface(self):
-        self.model.selected_interface = self.view.ui.interface_box.currentText()
-        self.model.get_selected_interface_info()
+        self.selected_interface = self.view.ui.interface_box.currentText()
+        self.get_selected_interface_info()
         self.print_selected_interface()
 
     def start_query_thread(self):
@@ -41,9 +55,9 @@ class Controller:
             self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
 
         else:
-            self.first_ip, self.last_ip = calc_range(self.model.my_ip, self.model.my_mask)
+            self.first_ip, self.last_ip = calc_range(self.my_ip, self.my_mask)
 
-            self.query_worker = ArpQueryWorker(self.model.default_interface, self.model.hex_mac, self.model.decimal_ip,
+            self.query_worker = ArpQueryWorker(self.default_interface, self.hex_mac, self.decimal_ip,
                                                self.first_ip, self.last_ip)
             self.query_thread = QThread()
             self.query_threads.append((self.query_worker, self.query_thread))
@@ -68,7 +82,7 @@ class Controller:
         if len(self.arp_sniffer_thread_list) > 0:
             pass
         else:
-            self.arp_sniffer_worker = ArpReplySnifferWorker(self.model.selected_interface, self.model.host_list)
+            self.arp_sniffer_worker = ArpReplySnifferWorker(self.selected_interface, self.model.host_list)
             self.arp_sniffer_thread = QThread()
             self.arp_sniffer_thread_list.append((self.arp_sniffer_worker, self.arp_sniffer_thread))
             self.arp_sniffer_worker.moveToThread(self.arp_sniffer_thread)
