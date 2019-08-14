@@ -16,7 +16,7 @@ class ScapyArpQueryWorker(QObject):
 
     @pyqtSlot()
     def stop_worker(self):
-        print("Stop received")
+        print("Worker received the Stop signal")
         self._is_running = False
         print("_is_running is {}".format(self._is_running))
 
@@ -30,7 +30,7 @@ class ScapyArpQueryWorker(QObject):
             pkt = scapy.sendp(scapy.Ether(dst="ff:ff:ff:ff:ff:ff")/scapy.ARP(pdst=dotted_ip), verbose=True)
             # if pkt[0][0][1]:
             #     print("{} is at {}".format(dotted_ip, pkt[0][0][1].hwsrc))
-            QThread.sleep(1)
+            QThread.msleep(10)
             QApplication.processEvents()
             if not self._is_running:
                 break
