@@ -49,6 +49,21 @@ class Controller:
         self.get_selected_interface_info()
         self.print_selected_interface()
 
+    def start_scapy_worker_thread(self):
+        if len(self.query_threads) > 0:
+            self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
+
+        else:
+            self.first_ip, self.last_ip = calc_range(self.my_ip, self.my_mask)
+
+            self.query_worker = ScapyArpQueryWorker(self.selected_interface, self.first_ip, self.last_ip)
+            self.query_thread = QThread()
+            self.query_threads.append((self.query_worker, self.query_thread))
+            self.query_worker.moveToThread(self.query_thread)
+            self.query_thread.started.connect(self.query_worker.task)
+            self.query_worker.done_signal.connect(self.stop_query_thread)
+            self.query_thread.start()
+
     def start_query_thread(self):
 
         if len(self.query_threads) > 0:

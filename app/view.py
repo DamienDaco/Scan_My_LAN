@@ -16,8 +16,8 @@ class View(QObject):
         self.start_connections()
 
     def start_connections(self):
-        self.ui.start_button.clicked.connect(self.controller.start_query_thread)
-        self.ui.start_button.clicked.connect(self.controller.start_arp_sniffer_thread)
+        self.ui.start_button.clicked.connect(self.controller.start_scapy_worker_thread)
+        # self.ui.start_button.clicked.connect(self.controller.start_arp_sniffer_thread) #No longer necessary because of Scapy
         self.ui.debug_button.clicked.connect(lambda: print("Test"))
         self.ui.interface_box.currentIndexChanged.connect(self.controller.update_selected_interface)
 

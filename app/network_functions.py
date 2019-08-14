@@ -1,4 +1,5 @@
 from socket import *
+import scapy.all as scapy
 import binascii, struct, sys, re, netifaces
 
 
