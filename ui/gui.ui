@@ -28,6 +28,20 @@
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
        <item row="0" column="2">
+        <widget class="QPushButton" name="debug_button">
+         <property name="text">
+          <string>Debug</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QPushButton" name="scan_button">
+         <property name="text">
+          <string>Scan</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
         <spacer name="horizontalSpacer">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -40,22 +54,15 @@
          </property>
         </spacer>
        </item>
-       <item row="0" column="1">
-        <widget class="QPushButton" name="debug_button">
-         <property name="text">
-          <string>Debug</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QPushButton" name="start_button">
-         <property name="text">
-          <string>Start</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="3">
+       <item row="0" column="4">
         <widget class="QComboBox" name="interface_box"/>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="stop_button">
+         <property name="text">
+          <string>Stop</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -68,7 +75,7 @@
      <x>0</x>
      <y>0</y>
      <width>515</width>
-     <height>30</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

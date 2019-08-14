@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'gui.ui'
 #
-# Created by: PyQt5 UI code generator 5.7
+# Created by: PyQt5 UI code generator 5.11.3
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -25,21 +25,24 @@ class Ui_MainWindow(object):
         self.frame.setObjectName("frame")
         self.gridLayout_2 = QtWidgets.QGridLayout(self.frame)
         self.gridLayout_2.setObjectName("gridLayout_2")
-        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.gridLayout_2.addItem(spacerItem, 0, 2, 1, 1)
         self.debug_button = QtWidgets.QPushButton(self.frame)
         self.debug_button.setObjectName("debug_button")
-        self.gridLayout_2.addWidget(self.debug_button, 0, 1, 1, 1)
-        self.start_button = QtWidgets.QPushButton(self.frame)
-        self.start_button.setObjectName("start_button")
-        self.gridLayout_2.addWidget(self.start_button, 0, 0, 1, 1)
+        self.gridLayout_2.addWidget(self.debug_button, 0, 2, 1, 1)
+        self.scan_button = QtWidgets.QPushButton(self.frame)
+        self.scan_button.setObjectName("scan_button")
+        self.gridLayout_2.addWidget(self.scan_button, 0, 0, 1, 1)
+        spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
+        self.gridLayout_2.addItem(spacerItem, 0, 3, 1, 1)
         self.interface_box = QtWidgets.QComboBox(self.frame)
         self.interface_box.setObjectName("interface_box")
-        self.gridLayout_2.addWidget(self.interface_box, 0, 3, 1, 1)
+        self.gridLayout_2.addWidget(self.interface_box, 0, 4, 1, 1)
+        self.stop_button = QtWidgets.QPushButton(self.frame)
+        self.stop_button.setObjectName("stop_button")
+        self.gridLayout_2.addWidget(self.stop_button, 0, 1, 1, 1)
         self.gridLayout.addWidget(self.frame, 0, 0, 1, 1)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 515, 30))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 515, 21))
         self.menubar.setObjectName("menubar")
         self.menuFile = QtWidgets.QMenu(self.menubar)
         self.menuFile.setObjectName("menuFile")
@@ -63,7 +66,8 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Scan My LAN"))
         self.debug_button.setText(_translate("MainWindow", "Debug"))
-        self.start_button.setText(_translate("MainWindow", "Start"))
+        self.scan_button.setText(_translate("MainWindow", "Scan"))
+        self.stop_button.setText(_translate("MainWindow", "Stop"))
         self.menuFile.setTitle(_translate("MainWindow", "Fi&le"))
         self.action_start.setText(_translate("MainWindow", "Start"))
         self.action_start.setToolTip(_translate("MainWindow", "Start"))
