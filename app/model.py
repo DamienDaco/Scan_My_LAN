@@ -1,4 +1,5 @@
 from app.multithreading import *
+import os, traceback, pickle
 
 
 class Model:
@@ -12,6 +13,21 @@ class Model:
         # self.get_selected_interface_info()
 
         self.host_list = []
+        self.open_saved_list()
+
+    def open_saved_list(self):
+        try:
+            with open('live_hosts.data', 'rb') as f:
+                self.host_list = pickle.load(f)
+        except Exception:
+            print("Couldn't load list of hosts.")
+
+    def save_list_to_disk(self):
+        try:
+            with open('live_hosts.data', 'wb') as f:
+                pickle.dump(self.host_list, f)
+        except Exception:
+            print("Couldn't save list to disk")
 
     # def get_selected_interface_info(self):
     #     self.my_mac = get_mac(self.selected_interface)
