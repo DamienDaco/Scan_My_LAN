@@ -39,6 +39,18 @@ class ScapyArpQueryWorker(QObject):
         self.finished.emit()
 
 
+# class ScapyArpSnifferWorker(QObject):
+#
+#     def __init__(self, host_list):
+#         super().__init__()
+#         self.host_list = host_list
+#         self._is_running = True
+#
+#     def task(self):
+#         while self._is_running:
+#             scapy.sniff(filter="arp")
+
+
 class ArpQueryWorker(QObject):
     str_signal = pyqtSignal(str)
     done_signal = pyqtSignal(name="done")

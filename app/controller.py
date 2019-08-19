@@ -2,6 +2,7 @@
 # from app.model import *
 
 from app.multithreading import *
+from app.scapy_tools import *
 
 
 class Controller:
@@ -20,9 +21,10 @@ class Controller:
         self.view.start()
         self.view.start_once()
         self.query_threads = []
-        self.arp_sniffer_thread_list = []
+        self.scapy_sniffer_thread_list = []
 
         self.print_selected_interface()
+        self.start_scapy_sniffer_thread()
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)
@@ -49,6 +51,22 @@ class Controller:
         self.get_selected_interface_info()
         self.print_selected_interface()
 
+    # @pyqtSlot(list) # <--- Do not use a pyqtSlot here, it breaks the connection
+    # See https://stackoverflow.com/questions/40674940/why-does-pyqtslot-decorator-cause-typeerror-connect-failed
+    def receive_data(self, data):
+        print("received data", data)
+        self.model.host_list = data
+
+    def start_scapy_sniffer_thread(self):
+        self.scapy_sniffer_worker = ScapyArpSnifferWorker(self.model.host_list)
+        self.scapy_sniffer_thread = QThread()
+        self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
+        self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
+        self.scapy_sniffer_worker.finished.connect(self.scapy_sniffer_thread.quit)
+        self.scapy_sniffer_worker.send_list_signal.connect(self.receive_data)
+        self.scapy_sniffer_thread.started.connect(self.scapy_sniffer_worker.task)
+        self.scapy_sniffer_thread.start()
+
     def start_scapy_query_thread(self):
         if len(self.query_threads) > 0:
             self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
@@ -64,24 +82,24 @@ class Controller:
             self.view.worker_connections()
             self.query_thread.start()
 
-    def start_query_thread(self):
-
-        if len(self.query_threads) > 0:
-            self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
-
-        else:
-            self.first_ip, self.last_ip = calc_range(self.my_ip, self.my_mask)
-
-            self.query_worker = ArpQueryWorker(self.default_interface, self.hex_mac, self.decimal_ip,
-                                               self.first_ip, self.last_ip)
-            self.query_thread = QThread()
-            self.query_threads.append((self.query_worker, self.query_thread))
-            self.query_worker.moveToThread(self.query_thread)
-            self.query_thread.started.connect(self.query_worker.task)
-            self.query_worker.done_signal.connect(self.stop_query_thread)
-            self.query_worker.done_signal.connect(self.stop_arp_sniffer_thread)
-
-            self.query_thread.start()
+    # def start_query_thread(self):
+    #
+    #     if len(self.query_threads) > 0:
+    #         self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
+    #
+    #     else:
+    #         self.first_ip, self.last_ip = calc_range(self.my_ip, self.my_mask)
+    #
+    #         self.query_worker = ArpQueryWorker(self.default_interface, self.hex_mac, self.decimal_ip,
+    #                                            self.first_ip, self.last_ip)
+    #         self.query_thread = QThread()
+    #         self.query_threads.append((self.query_worker, self.query_thread))
+    #         self.query_worker.moveToThread(self.query_thread)
+    #         self.query_thread.started.connect(self.query_worker.task)
+    #         self.query_worker.done_signal.connect(self.stop_query_thread)
+    #         self.query_worker.done_signal.connect(self.stop_arp_sniffer_thread)
+    #
+    #         self.query_thread.start()
 
     def stop_scapy_query(self):
 
@@ -99,16 +117,16 @@ class Controller:
 
         self.query_threads = []  # When done, reset list
 
-    def start_arp_sniffer_thread(self):
-        if len(self.arp_sniffer_thread_list) > 0:
-            pass
-        else:
-            self.arp_sniffer_worker = ArpReplySnifferWorker(self.selected_interface, self.model.host_list)
-            self.arp_sniffer_thread = QThread()
-            self.arp_sniffer_thread_list.append((self.arp_sniffer_worker, self.arp_sniffer_thread))
-            self.arp_sniffer_worker.moveToThread(self.arp_sniffer_thread)
-            self.arp_sniffer_thread.started.connect(self.arp_sniffer_worker.task)
-            self.arp_sniffer_thread.start()
+    # def start_arp_sniffer_thread(self):
+    #     if len(self.arp_sniffer_thread_list) > 0:
+    #         pass
+    #     else:
+    #         self.arp_sniffer_worker = ArpReplySnifferWorker(self.selected_interface, self.model.host_list)
+    #         self.arp_sniffer_thread = QThread()
+    #         self.arp_sniffer_thread_list.append((self.arp_sniffer_worker, self.arp_sniffer_thread))
+    #         self.arp_sniffer_worker.moveToThread(self.arp_sniffer_thread)
+    #         self.arp_sniffer_thread.started.connect(self.arp_sniffer_worker.task)
+    #         self.arp_sniffer_thread.start()
 
     def stop_arp_sniffer_thread(self):
         for worker, thread in self.arp_sniffer_thread_list:
