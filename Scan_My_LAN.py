@@ -12,7 +12,7 @@ class MainWindow(QMainWindow):
         super().__init__()
 
     def closeEvent(self, event):
-        model.save_list_to_disk()
+        model.pickle_list_to_disk()
         event.accept()
 
 

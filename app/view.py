@@ -1,5 +1,7 @@
 from PyQt5.QtCore import *
 from app.table_view import *
+from PyQt5.QtSql import *
+
 
 class View(QObject):
 
@@ -33,8 +35,14 @@ class View(QObject):
         self.ui.interface_box.addItems(iface_list)
         self.ui.interface_box.setCurrentText(iface)
 
-    def create_table(self, table_data):
-        # table_data = ['1', '2', '3', '4']
-        header = ['IP Address', 'MAC Address']
-        tm = MyTableModel(table_data, header, self)
+    # def create_table(self, table_data):
+    #     # table_data = ['1', '2', '3', '4']
+    #     header = ['IP Address', 'MAC Address']
+    #     tm = MyTableModel(table_data, header, self)
+    #     self.ui.table_view.setModel(tm)
+
+    def create_table_from_sql(self):
+        tm = QSqlTableModel()
+        tm.setTable('live_hosts')
+        tm.select()
         self.ui.table_view.setModel(tm)

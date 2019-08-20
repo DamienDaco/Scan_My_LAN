@@ -20,12 +20,15 @@ class Controller:
 
         self.view.start()
         self.view.start_once()
-        self.view.create_table(self.model.host_list)
+        # self.view.create_table(self.model.host_list)
         self.query_threads = []
         self.scapy_sniffer_thread_list = []
 
         self.print_selected_interface()
         self.start_scapy_sniffer_thread()
+
+        # self.model.create_sqlite_db()
+        self.view.create_table_from_sql()
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)
