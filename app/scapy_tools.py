@@ -24,6 +24,10 @@ class ScapyArpSnifferWorker(QObject):
                 "IP Address": pkt[ARP].psrc,
                 "MAC Address": pkt[ARP].hwsrc
             }
+            # host_dict = [[
+            #     pkt[ARP].psrc,
+            #     pkt[ARP].hwsrc
+            # ]]
             # Check if IP Address is in our list:
             # Also eliminate the special '0.0.0.0' case (Host without IP address yet):
             if not any(d.get('IP Address') == pkt[ARP].psrc or (pkt[ARP].psrc == '0.0.0.0') for d in self.live_hosts):

@@ -1,5 +1,5 @@
 from PyQt5.QtCore import *
-
+from app.table_view import *
 
 class View(QObject):
 
@@ -14,6 +14,7 @@ class View(QObject):
     def start_once(self):
         self.update_interface_box()
         self.start_connections()
+        # self.create_table()
 
     def start_connections(self):
         self.ui.scan_button.clicked.connect(self.controller.start_scapy_query_thread)
@@ -31,3 +32,9 @@ class View(QObject):
         iface, iface_list = self.controller.update_interface_box()
         self.ui.interface_box.addItems(iface_list)
         self.ui.interface_box.setCurrentText(iface)
+
+    def create_table(self, table_data):
+        # table_data = ['1', '2', '3', '4']
+        header = ['IP Address', 'MAC Address']
+        tm = MyTableModel(table_data, header, self)
+        self.ui.table_view.setModel(tm)

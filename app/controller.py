@@ -20,6 +20,7 @@ class Controller:
 
         self.view.start()
         self.view.start_once()
+        self.view.create_table(self.model.host_list)
         self.query_threads = []
         self.scapy_sniffer_thread_list = []
 
