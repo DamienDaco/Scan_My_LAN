@@ -1,5 +1,6 @@
 from PyQt5.QtCore import *
 from PyQt5.QtSql import *
+from PyQt5.QtGui import *
 
 
 class MySqlTableModel(QSqlTableModel):

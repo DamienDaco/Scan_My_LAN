@@ -14,8 +14,6 @@ class Model:
         # self.get_selected_interface_info()
 
         self.host_list = []
-        # self.open_pickled_list()
-
         self.db = QSqlDatabase.addDatabase('QSQLITE')
         if not self.db.isValid():
             print("Error: Invalid database.")
@@ -23,9 +21,9 @@ class Model:
         self.db.setDatabaseName('live_hosts.db')
         if not self.db.open():
             print("Error {}".format(self.db.lastError().text()))
+        self.db_table = 'live_hosts'
 
         self.query = QSqlQuery()
-
         if not self.query.exec_("CREATE TABLE IF NOT EXISTS live_hosts(ip_address VARCHAR(20) PRIMARY KEY, "
                                 "mac_address VARCHAR(20))"):
             print(self.query.lastError().text())

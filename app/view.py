@@ -1,6 +1,5 @@
 from PyQt5.QtCore import *
-from app.table_view import *
-from PyQt5.QtSql import *
+# from app.table_view import *
 
 
 class View(QObject):
@@ -41,11 +40,8 @@ class View(QObject):
     #     tm = MyTableModel(table_data, header, self)
     #     self.ui.table_view.setModel(tm)
 
-    def create_table_from_sql(self):
-        self.tm = MySqlTableModel()
-        self.tm.setTable('live_hosts')
-        self.tm.setHeaderData(0, Qt.Horizontal, "IP Address")
-        self.tm.setHeaderData(1, Qt.Horizontal, "MAC Address")
-        self.tm.select()
-        self.ui.table_view.setModel(self.tm)
-        self.ui.debug_button.clicked.connect(self.tm.info)
+    def create_table_from_sql(self, model):
+        table_view_model = model
+        table_view_model.select()
+        self.ui.table_view.setModel(table_view_model)
+        self.ui.debug_button.clicked.connect(table_view_model.info)

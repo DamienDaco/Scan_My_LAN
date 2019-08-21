@@ -1,5 +1,6 @@
 # from PyQt5.QtGui import *
 # from app.model import *
+from app.table_view import *
 
 from app.multithreading import *
 from app.scapy_tools import *
@@ -28,7 +29,11 @@ class Controller:
         self.start_scapy_sniffer_thread()
 
         # self.model.create_sqlite_db()
-        self.view.create_table_from_sql()
+        table_view_model = MySqlTableModel()
+        table_view_model.setTable(self.model.db_table)
+        table_view_model.setHeaderData(0, Qt.Horizontal, "IP Address")
+        table_view_model.setHeaderData(1, Qt.Horizontal, "MAC Address")
+        self.view.create_table_from_sql(table_view_model)
 
     def save_to_db(self, ip, mac):
         self.model.save_ip_mac_to_db(ip, mac)
