@@ -2,7 +2,7 @@
 # from app.model import *
 from app.table_view import *
 
-from app.multithreading import *
+# from app.multithreading import *
 from app.scapy_tools import *
 
 
