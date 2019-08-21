@@ -24,20 +24,31 @@ class Model:
         if not self.db.open():
             print("Error {}".format(self.db.lastError().text()))
 
-        query = QSqlQuery()
+        self.query = QSqlQuery()
 
-        if not query.exec_("CREATE TABLE IF NOT EXISTS live_hosts(ip_address VARCHAR(20) PRIMARY KEY, "
-                           "mac_address VARCHAR(20))"):
-            print(self.db.lastError().text())
+        if not self.query.exec_("CREATE TABLE IF NOT EXISTS live_hosts(ip_address VARCHAR(20) PRIMARY KEY, "
+                                "mac_address VARCHAR(20))"):
+            print(self.query.lastError().text())
 
+        # This was just for debugging:
         # if not query.prepare("INSERT INTO live_hosts values('192.168.1.1', "
         #                      "'e0:28:6d:2c:e8:9f')"):
         #     print(db.lastError().text())
         #     return False
-        if not query.exec_("INSERT INTO live_hosts VALUES('192.168.1.1', 'e0:28:6d:2c:e8:9f')"):
-            print(self.db.lastError().text())
+        # if not self.query.exec_("INSERT INTO live_hosts VALUES('192.168.1.1', 'e0:28:6d:2c:e8:9f')"):
+        #     print(self.query.lastError().text())
 
-        print(self.db.lastError().text())
+        print(self.query.lastError().text())
+
+    def save_ip_mac_to_db(self, ip, mac):
+        print("Attempting to save to db")
+        self.query.prepare("INSERT INTO live_hosts (ip_address, mac_address)"
+                           "VALUES (?, ?)")
+        self.query.addBindValue(ip)
+        self.query.addBindValue(mac)
+        if not self.query.exec_():
+            print(self.query.lastError().text())
+            return False
 
     def open_pickled_list(self):
         try:

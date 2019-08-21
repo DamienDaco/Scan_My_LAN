@@ -30,6 +30,9 @@ class Controller:
         # self.model.create_sqlite_db()
         self.view.create_table_from_sql()
 
+    def save_to_db(self, ip, mac):
+        self.model.save_ip_mac_to_db(ip, mac)
+
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)
         self.my_ip = get_host_ip(self.selected_interface)

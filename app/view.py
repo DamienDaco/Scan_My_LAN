@@ -21,7 +21,7 @@ class View(QObject):
     def start_connections(self):
         self.ui.scan_button.clicked.connect(self.controller.start_scapy_query_thread)
         # self.ui.start_button.clicked.connect(self.controller.start_arp_sniffer_thread) #No longer necessary because of Scapy
-        self.ui.debug_button.clicked.connect(lambda: print("Test"))
+        # self.ui.debug_button.clicked.connect(lambda: self.controller.save_to_db('192.168.1.1', 'aa:bb:cc:11:22:33'))
         self.ui.interface_box.currentIndexChanged.connect(self.controller.update_selected_interface)
 
     def worker_connections(self):
@@ -42,7 +42,10 @@ class View(QObject):
     #     self.ui.table_view.setModel(tm)
 
     def create_table_from_sql(self):
-        tm = QSqlTableModel()
-        tm.setTable('live_hosts')
-        tm.select()
-        self.ui.table_view.setModel(tm)
+        self.tm = MySqlTableModel()
+        self.tm.setTable('live_hosts')
+        self.tm.setHeaderData(0, Qt.Horizontal, "IP Address")
+        self.tm.setHeaderData(1, Qt.Horizontal, "MAC Address")
+        self.tm.select()
+        self.ui.table_view.setModel(self.tm)
+        self.ui.debug_button.clicked.connect(self.tm.info)

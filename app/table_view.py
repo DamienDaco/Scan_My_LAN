@@ -1,4 +1,19 @@
 from PyQt5.QtCore import *
+from PyQt5.QtSql import *
+
+
+class MySqlTableModel(QSqlTableModel):
+    def __init__(self):
+        super(MySqlTableModel, self).__init__()
+
+    def info(self):
+        print("-> info")
+        print("   MySqlTableModel tables inside :", self.database().tables())
+        print("   MySqlTableModel self.db       :", self.database())
+        print("   MySqlTableModel self.Table    :", self.tableName())
+        print("   MySqlTableModel self.rowCount :", self.rowCount())
+        print("   MySqlTableModel self.lastError :", self.lastError().text())
+        print("<- info")
 
 
 class MyTableModel(QAbstractTableModel):
