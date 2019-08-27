@@ -1,9 +1,8 @@
 # from PyQt5.QtGui import *
 # from app.model import *
 from app.table_view import *
-
-# from app.multithreading import *
 from app.scapy_tools import *
+from app.view import *
 
 
 class Controller:
@@ -29,14 +28,46 @@ class Controller:
         self.start_scapy_sniffer_thread()
 
         # self.model.create_sqlite_db()
-        table_view_model = MySqlTableModel()
-        table_view_model.setTable(self.model.db_table)
-        table_view_model.setHeaderData(0, Qt.Horizontal, "IP Address")
-        table_view_model.setHeaderData(1, Qt.Horizontal, "MAC Address")
-        self.view.create_table_from_sql(table_view_model)
+        self.table_view_model = MySqlTableModel()
+        self.table_view_model.setTable(self.model.db_table)
+        self.table_view_model.setHeaderData(1, Qt.Horizontal, "IP Address")
+        self.table_view_model.setHeaderData(2, Qt.Horizontal, "MAC Address")
+        self.table_view_model.setHeaderData(3, Qt.Horizontal, "Manufacturer")
+        # self.view.create_table_from_sql(table_view_model)
+        self.table_view_model.select()
+        self.view.ui.table_view.setModel(self.table_view_model)
+        self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
+        # self.model.update_db()
 
-    def save_to_db(self, ip, mac):
-        self.model.save_ip_mac_to_db(ip, mac)
+        self.add_record_to_db('192.168.1.200', 'AA:11:22:33:44:55')
+
+    def add_record_to_db(self, ip, mac):
+        print("Adding IP {} and MAC {} to db".format(ip, mac))
+        record = self.table_view_model.record()
+        record.setValue('ip_address', ip)
+        record.setValue('mac_address', mac)
+        record.setGenerated('id', False)
+        self.table_view_model.insertRecord(-1, record)
+
+    '''
+    Why should we use record.setGenerated('id', False) ?
+    Because we're using Sqlite auto incremented primary key; the database itself will provide that value.
+    If we don't set it to False, all the fields turn up empty.
+    https://stackoverflow.com/a/42319334/6743356
+    The caller should remember to set the generated flag to FALSE for fields where the database is meant to supply the value,
+     such as an automatically incremented ID.
+    '''
+
+    # def create_table_from_sql(self, model):
+    #     table_view_model = model
+    #     table_view_model.select()
+    #     self.ui.table_view.setModel(table_view_model)
+
+    # def save_to_db(self, ip, mac):
+    #     self.model.save_ip_mac_to_db(ip, mac)
+
+    # def update_db(self):
+    #     self.model.update_db()
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)

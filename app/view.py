@@ -15,7 +15,6 @@ class View(QObject):
     def start_once(self):
         self.update_interface_box()
         self.start_connections()
-        # self.create_table()
 
     def start_connections(self):
         self.ui.scan_button.clicked.connect(self.controller.start_scapy_query_thread)
@@ -40,8 +39,9 @@ class View(QObject):
     #     tm = MyTableModel(table_data, header, self)
     #     self.ui.table_view.setModel(tm)
 
-    def create_table_from_sql(self, model):
-        table_view_model = model
-        table_view_model.select()
-        self.ui.table_view.setModel(table_view_model)
-        self.ui.debug_button.clicked.connect(table_view_model.info)
+    # def create_table_from_sql(self, model):
+    #     table_view_model = model
+    #     table_view_model.select()
+    #     self.ui.table_view.setModel(table_view_model)
+        # self.ui.debug_button.clicked.connect(table_view_model.info)
+        # self.ui.debug_button.clicked.connect(self.controller.update_db)
