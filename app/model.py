@@ -26,7 +26,7 @@ class Model:
         self.query = QSqlQuery()
         if not self.query.exec_("CREATE TABLE IF NOT EXISTS live_hosts(id INTEGER PRIMARY KEY,"
                                 "ip_address TEXT NOT NULL UNIQUE, "
-                                "mac_address TEXT NOT NULL, oui TEXT)"):
+                                "mac_address TEXT NOT NULL, oui TEXT, status TEXT)"):
             print(self.query.lastError().text())
 
         # This was just for debugging:

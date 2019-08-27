@@ -57,11 +57,7 @@ class Controller:
             record.setValue('mac_address', mac)
             record.setGenerated('id', False)
             self.table_view_model.insertRecord(-1, record)
-        elif ([i for i in range(self.table_view_model.rowCount())
-                if ip == (self.table_view_model.record(i).value('ip_address'))
-               and mac == (self.table_view_model.record(i).value('mac_address'))]):
-            print("Found exact record {} in db. Passing.".format(ip))
-            pass
+
         else:
             for i in range(self.table_view_model.rowCount()):
                 if (ip == (self.table_view_model.record(i).value('ip_address'))
