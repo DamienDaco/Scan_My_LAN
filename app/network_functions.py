@@ -16,6 +16,11 @@ def get_mac(interface):
     return mac
 
 
+def get_mac_from_scapy(interface):
+
+    return scapy.get_if_hwaddr(interface)
+
+
 def get_host_ip(interface):
 
     ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
@@ -43,7 +48,7 @@ def get_interfaces():
 
 def get_interfaces_with_scapy():
     # Works with Windows
-    # Outputs a list of dictionnaries
+    # Outputs a list of dictionaries
     # Let's extract only the adapter names
     lod = scapy.get_windows_if_list()
     return [i.get('name') for i in lod]

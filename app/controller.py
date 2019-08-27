@@ -12,7 +12,6 @@ class Controller:
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
         self.interface_list = get_interfaces_with_scapy()
-        self.get_selected_interface_info()
 
         self.model = model
         self.view = view
@@ -24,6 +23,7 @@ class Controller:
         self.query_threads = []
         self.scapy_sniffer_thread_list = []
 
+        self.get_selected_interface_info()
         self.print_selected_interface()
         self.start_scapy_sniffer_thread()
 
@@ -97,6 +97,14 @@ class Controller:
         self.hex_mac = hex_mac(self.my_mac)
         self.decimal_ip = decimal_ip(self.my_ip)
 
+    def get_selected_interface_info_from_scapy(self):
+        self.my_mac = get_mac(self.selected_interface)
+        self.my_ip = get_host_ip(self.selected_interface)
+        self.my_mask = get_host_mask(self.selected_interface)
+
+        self.hex_mac = hex_mac(self.my_mac)
+        self.decimal_ip = decimal_ip(self.my_ip)
+
     def print_selected_interface(self):
         print("Your current interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
               self.selected_interface, self.my_ip, self.my_mask, self.my_mac))
@@ -110,7 +118,8 @@ class Controller:
         return iface, iface_list
 
     def update_selected_interface(self):
-        self.selected_interface = self.view.ui.interface_box.currentText()
+        idx = self.view.ui.interface_box.currentIndex()
+        self.selected_interface = get_interfaces()[idx]
         self.get_selected_interface_info()
         self.print_selected_interface()
 
