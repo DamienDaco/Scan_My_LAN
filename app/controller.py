@@ -101,7 +101,7 @@ class Controller:
         self.model.host_list = data
 
     def start_scapy_sniffer_thread(self):
-        self.scapy_sniffer_worker = ScapyArpSnifferWorker(self.model.host_list)
+        self.scapy_sniffer_worker = ScapyArpSnifferWorker()
         self.scapy_sniffer_thread = QThread()
         self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
         self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
