@@ -5,7 +5,7 @@ from app.network_functions import *
 
 
 class ScapyArpSnifferWorker(QObject):
-    send_list_signal = pyqtSignal(list)
+    send_list_signal = pyqtSignal(str, str)
     finished = pyqtSignal(name="done")
 
     def __init__(self):
@@ -33,7 +33,7 @@ class ScapyArpSnifferWorker(QObject):
             # Also eliminate the special '0.0.0.0' case (Host without IP address yet):
             if not (pkt[ARP].psrc == '0.0.0.0'):
                 print("Worker sending {}".format(ip_mac_list))
-                self.send_list_signal.emit(ip_mac_list)
+                self.send_list_signal.emit(pkt[ARP].psrc, pkt[ARP].hwsrc)
 
             # If an IP Address has been allocated to another host, update the MAC address:
             # elif any(d.get('IP Address') == pkt[ARP].psrc and not d.get('MAC Address') == pkt[ARP].hwsrc for d in

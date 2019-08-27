@@ -96,9 +96,9 @@ class Controller:
 
     # @pyqtSlot(list) # <--- Do not use a pyqtSlot here, it breaks the connection
     # See https://stackoverflow.com/questions/40674940/why-does-pyqtslot-decorator-cause-typeerror-connect-failed
-    def receive_data(self, data):
-        print("received data", data)
-        self.model.host_list = data
+    def receive_data(self, data1, data2):
+        print("Received data {} and {}".format(data1, data2))
+        # self.model.host_list = data
 
     def start_scapy_sniffer_thread(self):
         self.scapy_sniffer_worker = ScapyArpSnifferWorker()
@@ -106,7 +106,7 @@ class Controller:
         self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
         self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
         self.scapy_sniffer_worker.finished.connect(self.scapy_sniffer_thread.quit)
-        self.scapy_sniffer_worker.send_list_signal.connect(self.receive_data)
+        self.scapy_sniffer_worker.send_list_signal.connect(self.add_record_to_db)
         self.scapy_sniffer_thread.started.connect(self.scapy_sniffer_worker.task)
         self.scapy_sniffer_thread.start()
 
