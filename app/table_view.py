@@ -6,6 +6,7 @@ from PyQt5.QtGui import *
 class MySqlTableModel(QSqlTableModel):
     def __init__(self):
         super(MySqlTableModel, self).__init__()
+        self.setEditStrategy(QSqlTableModel.OnFieldChange)
 
     def info(self):
         print("-> info")

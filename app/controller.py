@@ -37,9 +37,6 @@ class Controller:
         self.table_view_model.select()
         self.view.ui.table_view.setModel(self.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
-        # self.model.update_db()
-
-        self.add_record_to_db('192.168.1.200', 'AA:11:22:33:44:55')
 
     def add_record_to_db(self, ip, mac):
         print("Adding IP {} and MAC {} to db".format(ip, mac))
@@ -48,6 +45,32 @@ class Controller:
         record.setValue('mac_address', mac)
         record.setGenerated('id', False)
         self.table_view_model.insertRecord(-1, record)
+
+    def check_if_record_exists(self, ip, mac):
+
+        if not ([i for i in range(self.table_view_model.rowCount())
+                if ip == (self.table_view_model.record(i).value('ip_address'))]):
+            print("Could not find record {} in db".format(ip))
+            print("Adding IP {} and MAC {} to db".format(ip, mac))
+            record = self.table_view_model.record()
+            record.setValue('ip_address', ip)
+            record.setValue('mac_address', mac)
+            record.setGenerated('id', False)
+            self.table_view_model.insertRecord(-1, record)
+        elif ([i for i in range(self.table_view_model.rowCount())
+                if ip == (self.table_view_model.record(i).value('ip_address'))
+               and mac == (self.table_view_model.record(i).value('mac_address'))]):
+            print("Found exact record {} in db. Passing.".format(ip))
+            pass
+        else:
+            for i in range(self.table_view_model.rowCount()):
+                if (ip == (self.table_view_model.record(i).value('ip_address'))
+                        and mac != (self.table_view_model.record(i).value('mac_address'))):
+
+                    print("Updating MAC address for host {} with new value {}".format(ip, mac))
+                    record = self.table_view_model.record(i)
+                    record.setValue('mac_address', mac)
+                    self.table_view_model.setRecord(i, record)
 
     '''
     Why should we use record.setGenerated('id', False) ?
@@ -106,7 +129,7 @@ class Controller:
         self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
         self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
         self.scapy_sniffer_worker.finished.connect(self.scapy_sniffer_thread.quit)
-        self.scapy_sniffer_worker.send_list_signal.connect(self.add_record_to_db)
+        self.scapy_sniffer_worker.send_list_signal.connect(self.check_if_record_exists)
         self.scapy_sniffer_thread.started.connect(self.scapy_sniffer_worker.task)
         self.scapy_sniffer_thread.start()
 
