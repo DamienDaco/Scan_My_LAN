@@ -12,7 +12,6 @@ class Controller:
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
         self.interface_list = get_interfaces_with_scapy()
-
         self.model = model
         self.view = view
         self.view.set_controller(self)
@@ -107,7 +106,7 @@ class Controller:
 
     def print_selected_interface(self):
         print("Your current interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
-              self.selected_interface, self.my_ip, self.my_mask, self.my_mac))
+              self.view.ui.interface_box.currentText(), self.my_ip, self.my_mask, self.my_mac))
 
     def calc_range(self):
         calc_range(self.my_ip, self.my_mask)
