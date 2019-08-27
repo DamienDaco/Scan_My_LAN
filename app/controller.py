@@ -11,7 +11,7 @@ class Controller:
 
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
-        self.interface_list = get_interfaces()
+        self.interface_list = get_interfaces_with_scapy()
         self.get_selected_interface_info()
 
         self.model = model
@@ -33,6 +33,7 @@ class Controller:
         self.table_view_model.setHeaderData(1, Qt.Horizontal, "IP Address")
         self.table_view_model.setHeaderData(2, Qt.Horizontal, "MAC Address")
         self.table_view_model.setHeaderData(3, Qt.Horizontal, "Manufacturer")
+        self.table_view_model.setHeaderData(4, Qt.Horizontal, "Status")
         # self.view.create_table_from_sql(table_view_model)
         self.table_view_model.select()
         self.view.ui.table_view.setModel(self.table_view_model)

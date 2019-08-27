@@ -35,9 +35,18 @@ def get_gateway():
 
 
 def get_interfaces():
-
+    # This produces horrible results under Windows (A list of GUIDs)
+    # Works fine with Linux
     interface_list = netifaces.interfaces()
     return interface_list
+
+
+def get_interfaces_with_scapy():
+    # Works with Windows
+    # Outputs a list of dictionnaries
+    # Let's extract only the adapter names
+    lod = scapy.get_windows_if_list()
+    return [i.get('name') for i in lod]
 
 
 def hex_mac(mac):
