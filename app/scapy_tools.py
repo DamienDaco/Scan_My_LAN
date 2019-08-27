@@ -32,7 +32,7 @@ class ScapyArpSnifferWorker(QObject):
             # Check if IP Address is in our list:
             # Also eliminate the special '0.0.0.0' case (Host without IP address yet):
             if not (pkt[ARP].psrc == '0.0.0.0'):
-                print(ip_mac_list)
+                print("Worker sending {}".format(ip_mac_list))
                 self.send_list_signal.emit(ip_mac_list)
 
             # If an IP Address has been allocated to another host, update the MAC address:
