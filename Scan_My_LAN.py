@@ -11,10 +11,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-    def closeEvent(self, event):
-        model.pickle_list_to_disk()
-        event.accept()
-
 
 if __name__ == "__main__":
 

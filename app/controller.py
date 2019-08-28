@@ -1,6 +1,6 @@
 # from PyQt5.QtGui import *
 # from app.model import *
-from app.table_view import *
+from app.table_view_model import *
 from app.scapy_tools import *
 from app.view import *
 from manuf import manuf

@@ -1,7 +1,7 @@
 from app.multithreading import *
 import os, pickle
 from PyQt5.QtSql import *
-from app.table_view import *
+from app.table_view_model import *
 
 
 class Model:
