@@ -3,6 +3,7 @@
 from app.table_view import *
 from app.scapy_tools import *
 from app.view import *
+from manuf import manuf
 
 
 class Controller:
@@ -38,6 +39,9 @@ class Controller:
         self.view.ui.table_view.setModel(self.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
 
+        self.mac_parser = manuf.MacParser(update=True)
+
+
     def add_record_to_db(self, ip, mac):
         print("Adding IP {} and MAC {} to db".format(ip, mac))
         record = self.table_view_model.record()
@@ -52,9 +56,11 @@ class Controller:
                 if ip == (self.table_view_model.record(i).value('ip_address'))]):
             print("Could not find record {} in db".format(ip))
             print("Adding IP {} and MAC {} to db".format(ip, mac))
+            oui = self.mac_parser.get_manuf_long(mac)
             record = self.table_view_model.record()
             record.setValue('ip_address', ip)
             record.setValue('mac_address', mac)
+            record.setValue('oui', oui)
             record.setGenerated('id', False)
             self.table_view_model.insertRecord(-1, record)
 
@@ -64,8 +70,10 @@ class Controller:
                         and mac != (self.table_view_model.record(i).value('mac_address'))):
 
                     print("Updating MAC address for host {} with new value {}".format(ip, mac))
+                    oui = self.mac_parser.get_manuf_long(mac)
                     record = self.table_view_model.record(i)
                     record.setValue('mac_address', mac)
+                    record.setValue('oui', oui)
                     self.table_view_model.setRecord(i, record)
 
     '''
