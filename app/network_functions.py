@@ -4,7 +4,7 @@ import binascii, struct, sys, re, netifaces
 
 
 def get_default_interface():
-    #Let's get our default interface, by getting the device used by the default IPv4 route.
+    # Let's get our default interface, by getting the device used by the default IPv4 route.
     default_interface = netifaces.gateways()['default'][netifaces.AF_INET][1]
     return default_interface
 

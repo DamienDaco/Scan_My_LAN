@@ -19,7 +19,7 @@ class Controller:
 
         self.view.start()
         self.view.start_once()
-        # self.view.create_table(self.model.host_list)
+
         self.query_threads = []
         self.scapy_sniffer_thread_list = []
 
@@ -27,20 +27,18 @@ class Controller:
         self.print_selected_interface()
         self.start_scapy_sniffer_thread()
 
-        # self.model.create_sqlite_db()
         self.table_view_model = MySqlTableModel()
         self.table_view_model.setTable(self.model.db_table)
         self.table_view_model.setHeaderData(1, Qt.Horizontal, "IP Address")
         self.table_view_model.setHeaderData(2, Qt.Horizontal, "MAC Address")
         self.table_view_model.setHeaderData(3, Qt.Horizontal, "Manufacturer")
         self.table_view_model.setHeaderData(4, Qt.Horizontal, "Status")
-        # self.view.create_table_from_sql(table_view_model)
+
         self.table_view_model.select()
         self.view.ui.table_view.setModel(self.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
 
         self.mac_parser = manuf.MacParser(update=True)
-
 
     def add_record_to_db(self, ip, mac):
         print("Adding IP {} and MAC {} to db".format(ip, mac))
@@ -85,26 +83,7 @@ class Controller:
      such as an automatically incremented ID.
     '''
 
-    # def create_table_from_sql(self, model):
-    #     table_view_model = model
-    #     table_view_model.select()
-    #     self.ui.table_view.setModel(table_view_model)
-
-    # def save_to_db(self, ip, mac):
-    #     self.model.save_ip_mac_to_db(ip, mac)
-
-    # def update_db(self):
-    #     self.model.update_db()
-
     def get_selected_interface_info(self):
-        self.my_mac = get_mac(self.selected_interface)
-        self.my_ip = get_host_ip(self.selected_interface)
-        self.my_mask = get_host_mask(self.selected_interface)
-
-        self.hex_mac = hex_mac(self.my_mac)
-        self.decimal_ip = decimal_ip(self.my_ip)
-
-    def get_selected_interface_info_from_scapy(self):
         self.my_mac = get_mac(self.selected_interface)
         self.my_ip = get_host_ip(self.selected_interface)
         self.my_mask = get_host_mask(self.selected_interface)
@@ -161,25 +140,6 @@ class Controller:
             self.view.worker_connections()
             self.query_thread.start()
 
-    # def start_query_thread(self):
-    #
-    #     if len(self.query_threads) > 0:
-    #         self.view.ui.statusbar.showMessage("There's a query_thread already running. Please wait", 3000)
-    #
-    #     else:
-    #         self.first_ip, self.last_ip = calc_range(self.my_ip, self.my_mask)
-    #
-    #         self.query_worker = ArpQueryWorker(self.default_interface, self.hex_mac, self.decimal_ip,
-    #                                            self.first_ip, self.last_ip)
-    #         self.query_thread = QThread()
-    #         self.query_threads.append((self.query_worker, self.query_thread))
-    #         self.query_worker.moveToThread(self.query_thread)
-    #         self.query_thread.started.connect(self.query_worker.task)
-    #         self.query_worker.done_signal.connect(self.stop_query_thread)
-    #         self.query_worker.done_signal.connect(self.stop_arp_sniffer_thread)
-    #
-    #         self.query_thread.start()
-
     def stop_scapy_query(self):
 
         print("Stop button pressed")
@@ -195,17 +155,6 @@ class Controller:
                 thread.wait()
 
         self.query_threads = []  # When done, reset list
-
-    # def start_arp_sniffer_thread(self):
-    #     if len(self.arp_sniffer_thread_list) > 0:
-    #         pass
-    #     else:
-    #         self.arp_sniffer_worker = ArpReplySnifferWorker(self.selected_interface, self.model.host_list)
-    #         self.arp_sniffer_thread = QThread()
-    #         self.arp_sniffer_thread_list.append((self.arp_sniffer_worker, self.arp_sniffer_thread))
-    #         self.arp_sniffer_worker.moveToThread(self.arp_sniffer_thread)
-    #         self.arp_sniffer_thread.started.connect(self.arp_sniffer_worker.task)
-    #         self.arp_sniffer_thread.start()
 
     def stop_arp_sniffer_thread(self):
         for worker, thread in self.arp_sniffer_thread_list:

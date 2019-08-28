@@ -6,17 +6,6 @@ from app.network_functions import *
 Warning: This whole file has become obsolete. See file scapy_tools.py for new updated classes.
 '''
 
-# class ScapyArpSnifferWorker(QObject):
-#
-#     def __init__(self, host_list):
-#         super().__init__()
-#         self.host_list = host_list
-#         self._is_running = True
-#
-#     def task(self):
-#         while self._is_running:
-#             scapy.sniff(filter="arp")
-
 
 class ArpQueryWorker(QObject):
     str_signal = pyqtSignal(str)
@@ -55,9 +44,6 @@ class ArpReplySnifferWorker(QObject):
         self.is_running = True
         self.interface = interface
         self.host_list = host_list
-
-        # self.done_signal.connect(ResultObj)
-        # self.done_signal.connect(TableModel.update)
 
     def task(self):
         print("Capturing ARP replies on interface {}".format(self.interface))

@@ -20,9 +20,11 @@ class MySqlTableModel(QSqlTableModel):
 
 class MyTableModel(QAbstractTableModel):
     def __init__(self, datain, headerdata, parent=None):
-        """ datain: a list of lists
-            headerdata: a list of strings
-        """
+        '''
+            This model is now obsolete.
+            It used to be my table model when I was using a list of dictionaries.
+            No longer used. See 'MySqlTableModel' for current model.
+        '''
         super(MyTableModel, self).__init__(parent)
         self.arraydata = datain
         self.headerdata = headerdata
@@ -34,13 +36,6 @@ class MyTableModel(QAbstractTableModel):
         if len(self.arraydata) > 0:
             return len(self.arraydata[0])
         return 0
-
-    # def data(self, index, role):
-    #     if not index.isValid():
-    #         return QVariant()
-    #     elif role != Qt.DisplayRole:
-    #         return QVariant()
-    #     return QVariant(self.arraydata[index.row()][index.column()])
 
     def data(self, index, role=Qt.DisplayRole):
         if role == Qt.DisplayRole:

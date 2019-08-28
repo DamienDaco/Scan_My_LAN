@@ -33,16 +33,3 @@ class View(QObject):
         iface, iface_list = self.controller.update_interface_box()
         self.ui.interface_box.addItems(iface_list)
         self.ui.interface_box.setCurrentText(iface)
-
-    # def create_table(self, table_data):
-    #     # table_data = ['1', '2', '3', '4']
-    #     header = ['IP Address', 'MAC Address']
-    #     tm = MyTableModel(table_data, header, self)
-    #     self.ui.table_view.setModel(tm)
-
-    # def create_table_from_sql(self, model):
-    #     table_view_model = model
-    #     table_view_model.select()
-    #     self.ui.table_view.setModel(table_view_model)
-        # self.ui.debug_button.clicked.connect(table_view_model.info)
-        # self.ui.debug_button.clicked.connect(self.controller.update_db)
