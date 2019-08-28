@@ -32,14 +32,6 @@ class Controller:
 
         self.mac_parser = manuf.MacParser(update=True)
 
-    def add_record_to_db(self, ip, mac):
-        print("Adding IP {} and MAC {} to db".format(ip, mac))
-        record = self.table_view_model.record()
-        record.setValue('ip_address', ip)
-        record.setValue('mac_address', mac)
-        record.setGenerated('id', False)
-        self.table_view_model.insertRecord(-1, record)
-
     def check_if_record_exists(self, ip, mac):
 
         if not ([i for i in range(self.model.table_view_model.rowCount())
@@ -74,6 +66,14 @@ class Controller:
     The caller should remember to set the generated flag to FALSE for fields where the database is meant to supply the value,
      such as an automatically incremented ID.
     '''
+
+    # def add_record_to_db(self, ip, mac):
+    #     print("Adding IP {} and MAC {} to db".format(ip, mac))
+    #     record = self.table_view_model.record()
+    #     record.setValue('ip_address', ip)
+    #     record.setValue('mac_address', mac)
+    #     record.setGenerated('id', False)
+    #     self.table_view_model.insertRecord(-1, record)
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)
