@@ -1,4 +1,5 @@
-# from PyQt5.QtGui import *
+from PyQt5.QtGui import *
+from PyQt5.QtWidgets import *
 # from app.model import *
 from app.table_view_model import *
 from app.scapy_tools import *
@@ -29,8 +30,9 @@ class Controller:
 
         self.view.ui.table_view.setModel(self.model.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
+        self.view.ui.table_view.setEditTriggers(QAbstractItemView.NoEditTriggers) # Set table view to read only
 
-        self.mac_parser = manuf.MacParser(update=True)
+        self.mac_parser = manuf.MacParser(update=False)
 
     def check_if_record_exists(self, ip, mac):
 
