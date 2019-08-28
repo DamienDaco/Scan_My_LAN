@@ -27,15 +27,7 @@ class Controller:
         self.print_selected_interface()
         self.start_scapy_sniffer_thread()
 
-        self.table_view_model = MySqlTableModel()
-        self.table_view_model.setTable(self.model.db_table)
-        self.table_view_model.setHeaderData(1, Qt.Horizontal, "IP Address")
-        self.table_view_model.setHeaderData(2, Qt.Horizontal, "MAC Address")
-        self.table_view_model.setHeaderData(3, Qt.Horizontal, "Manufacturer")
-        self.table_view_model.setHeaderData(4, Qt.Horizontal, "Status")
-
-        self.table_view_model.select()
-        self.view.ui.table_view.setModel(self.table_view_model)
+        self.view.ui.table_view.setModel(self.model.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
 
         self.mac_parser = manuf.MacParser(update=True)
@@ -50,29 +42,29 @@ class Controller:
 
     def check_if_record_exists(self, ip, mac):
 
-        if not ([i for i in range(self.table_view_model.rowCount())
-                if ip == (self.table_view_model.record(i).value('ip_address'))]):
+        if not ([i for i in range(self.model.table_view_model.rowCount())
+                if ip == (self.model.table_view_model.record(i).value('ip_address'))]):
             print("Could not find record {} in db".format(ip))
             print("Adding IP {} and MAC {} to db".format(ip, mac))
             oui = self.mac_parser.get_manuf_long(mac)
-            record = self.table_view_model.record()
+            record = self.model.table_view_model.record()
             record.setValue('ip_address', ip)
             record.setValue('mac_address', mac)
             record.setValue('oui', oui)
             record.setGenerated('id', False)
-            self.table_view_model.insertRecord(-1, record)
+            self.model.table_view_model.insertRecord(-1, record)
 
         else:
-            for i in range(self.table_view_model.rowCount()):
-                if (ip == (self.table_view_model.record(i).value('ip_address'))
-                        and mac != (self.table_view_model.record(i).value('mac_address'))):
+            for i in range(self.model.table_view_model.rowCount()):
+                if (ip == (self.model.table_view_model.record(i).value('ip_address'))
+                        and mac != (self.model.table_view_model.record(i).value('mac_address'))):
 
                     print("Updating MAC address for host {} with new value {}".format(ip, mac))
                     oui = self.mac_parser.get_manuf_long(mac)
-                    record = self.table_view_model.record(i)
+                    record = self.model.table_view_model.record(i)
                     record.setValue('mac_address', mac)
                     record.setValue('oui', oui)
-                    self.table_view_model.setRecord(i, record)
+                    self.model.table_view_model.setRecord(i, record)
 
     '''
     Why should we use record.setGenerated('id', False) ?

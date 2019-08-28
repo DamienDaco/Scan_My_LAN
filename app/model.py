@@ -1,6 +1,7 @@
 from app.multithreading import *
 import os, pickle
 from PyQt5.QtSql import *
+from app.table_view import *
 
 
 class Model:
@@ -23,6 +24,10 @@ class Model:
                                 "ip_address TEXT NOT NULL UNIQUE, "
                                 "mac_address TEXT NOT NULL, oui TEXT, status TEXT)"):
             print(self.query.lastError().text())
+
+        self.table_view_model = MySqlTableModel()
+        self.table_view_model.setTable(self.db_table)
+        self.table_view_model.select()
 
     def save_ip_mac_to_db(self, ip, mac):
         print("Attempting to save to db")

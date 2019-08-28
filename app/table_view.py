@@ -6,7 +6,12 @@ from PyQt5.QtGui import *
 class MySqlTableModel(QSqlTableModel):
     def __init__(self):
         super(MySqlTableModel, self).__init__()
+
         self.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.setHeaderData(1, Qt.Horizontal, "IP Address")
+        self.setHeaderData(2, Qt.Horizontal, "MAC Address")
+        self.setHeaderData(3, Qt.Horizontal, "Manufacturer")
+        self.setHeaderData(4, Qt.Horizontal, "Status")
 
     def info(self):
         print("-> info")
