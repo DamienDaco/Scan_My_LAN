@@ -72,13 +72,50 @@ class Controller(QObject):
                         and mac != (self.model.table_view_model.record(i).value('mac_address'))):
 
                     print("Updating MAC address for host {} with new value {}".format(ip, mac))
-                    record = self.model.table_view_model.record()
+                    # record = self.model.table_view_model.record()
                     oui = self.mac_parser.get_manuf_long(mac)
                     record = self.model.table_view_model.record(i)
                     record.setValue('mac_address', mac)
                     record.setValue('oui', oui)
                     self.model.table_view_model.setRecord(i, record)
                     self.send_ip_signal.emit(ip)
+
+    def add_fqdn_to_db(self, ip, fqdn):
+        """
+                Parameters:
+                argument1 (str): e.g. '192.168.1.1'
+
+                argument2 (str): e.g. 'fritz.box'
+        """
+        print("Adding FQDN {} for host {} to db".format(fqdn, ip))
+        # for i in range(self.model.table_view_model.rowCount()):
+        #     if ip == (self.model.table_view_model.record(i).value('ip_address')):
+        #         if not(self.model.table_view_model.record(i).value('computer_name')):
+        #             record = self.model.table_view_model.record(i)
+        #             record.setValue('computer_name', fqdn)
+        #             self.model.table_view_model.setRecord(i, record)
+        if ip == fqdn:
+            '''Some computers/devices don't have a network name. 
+            In that case, getfqdn() returns the IP as the FQDN value. Therefore, let's ignore it.'''
+            pass
+        else:
+            query = QSqlQuery()
+            query.prepare("UPDATE live_hosts SET computer_name = :fqdn WHERE ip_address = :ip")
+            query.bindValue(":fqdn", fqdn)
+            query.bindValue(":ip", ip)
+            if query.exec_():
+                self.model.table_view_model.select()
+            else:
+                print(query.lastError().text())
+
+
+        # if ([((record = self.model.table_view_model.setRecord(i).setValue('computer_name', fqdn)), self.model.table_view_model.record(i, record))
+        #                                             )) for i in range(self.model.table_view_model.rowCount())
+        #         if not (self.model.table_view_model.record(i).value('computer_name'))]):
+        #     print("Can't find record {} for IP {}".format(fqdn, ip))
+        #
+        # else:
+        #     print("Found record {} for IP {}".format(fqdn, ip))
 
     # def add_record_to_db(self, ip, mac):
     #     print("Adding IP {} and MAC {} to db".format(ip, mac))
@@ -158,7 +195,7 @@ class Controller(QObject):
         # self.fqdn_thread.started.connect(self.fqdn_worker.task) # Don't start it yet
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
-        self.fqdn_worker.send_fqdn_signal.connect(self.debug_fqdn)
+        self.fqdn_worker.send_fqdn_signal.connect(self.add_fqdn_to_db)
         self.send_ip_signal.connect(self.fqdn_worker.task)
         self.fqdn_thread.start()
 
