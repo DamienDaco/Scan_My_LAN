@@ -35,8 +35,8 @@ class ScapyArpSnifferWorker(QObject):
             # Also eliminate the special '0.0.0.0' case (Host without IP address yet):
             if not (pkt[ARP].psrc == '0.0.0.0'):
                 print("Worker sending {}".format(ip_mac_list))
-                print("Worker sending ip signal {}".format(pkt[ARP].psrc))
-                self.send_ip_signal.emit(pkt[ARP].psrc)
+                # print("Worker sending ip signal {}".format(pkt[ARP].psrc))
+                # self.send_ip_signal.emit(pkt[ARP].psrc)
                 self.send_list_signal.emit(pkt[ARP].psrc, pkt[ARP].hwsrc)
 
 

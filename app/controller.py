@@ -38,8 +38,13 @@ class Controller(QObject):
 
         self.mac_parser = manuf.MacParser(update=False)
 
-    def check_if_record_exists(self, ip, mac):
+    def add_ip_mac_in_db(self, ip, mac):
         """
+        Parameters:
+        argument1 (str): e.g. '192.168.1.1'
+
+        argument2 (str): e.g. '11:22:33:AA:BB:CC'
+
         Why should we use record.setGenerated('id', False) ?
         Because we're using Sqlite auto incremented primary key; the database itself will provide that value.
         If we don't set it to False, all the fields turn up empty.
@@ -127,7 +132,7 @@ class Controller(QObject):
         self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
         self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
         self.scapy_sniffer_worker.finished.connect(self.scapy_sniffer_thread.quit)
-        self.scapy_sniffer_worker.send_list_signal.connect(self.check_if_record_exists)
+        self.scapy_sniffer_worker.send_list_signal.connect(self.add_ip_mac_in_db)
         self.scapy_sniffer_thread.started.connect(self.scapy_sniffer_worker.task)
         self.scapy_sniffer_thread.start()
 
