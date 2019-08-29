@@ -2,10 +2,12 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from scapy.all import *
 from app.network_functions import *
+from socket import *
 
 
 class ScapyArpSnifferWorker(QObject):
     send_list_signal = pyqtSignal(str, str)
+    send_ip_signal = pyqtSignal(str)
     finished = pyqtSignal(name="done")
 
     def __init__(self):
@@ -33,7 +35,10 @@ class ScapyArpSnifferWorker(QObject):
             # Also eliminate the special '0.0.0.0' case (Host without IP address yet):
             if not (pkt[ARP].psrc == '0.0.0.0'):
                 print("Worker sending {}".format(ip_mac_list))
+                print("Worker sending ip signal {}".format(pkt[ARP].psrc))
+                self.send_ip_signal.emit(pkt[ARP].psrc)
                 self.send_list_signal.emit(pkt[ARP].psrc, pkt[ARP].hwsrc)
+
 
             # If an IP Address has been allocated to another host, update the MAC address:
             # elif any(d.get('IP Address') == pkt[ARP].psrc and not d.get('MAC Address') == pkt[ARP].hwsrc for d in
@@ -83,3 +88,17 @@ class ScapyArpQueryWorker(QObject):
 
         self._is_running = False
         self.finished.emit()
+
+
+class FqdnWorker(QObject):
+    send_fqdn_signal = pyqtSignal(str, str)
+    # finished = pyqtSignal(name="done")
+
+    def __init__(self):
+        super().__init__()
+
+    # @pyqtSlot() # Again, @pyqtSlot seems to break things. Avoid it in this case.
+    def task(self, ip):
+
+        fqdn = getfqdn(ip)
+        self.send_fqdn_signal.emit(ip, fqdn)

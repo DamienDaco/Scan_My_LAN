@@ -1,5 +1,6 @@
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
+from PyQt5.QtCore import *
 # from app.model import *
 from app.table_view_model import *
 from app.scapy_tools import *
@@ -7,9 +8,11 @@ from app.view import *
 from manuf import manuf
 
 
-class Controller:
+class Controller(QObject):
+    send_ip_signal = pyqtSignal(str)
 
     def __init__(self, view, model):
+        super().__init__()
 
         self.default_interface = get_default_interface()
         self.selected_interface = self.default_interface
@@ -27,6 +30,7 @@ class Controller:
         self.get_selected_interface_info()
         self.print_selected_interface()
         self.start_scapy_sniffer_thread()
+        self.start_fqdn_thread()
 
         self.view.ui.table_view.setModel(self.model.table_view_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
@@ -35,6 +39,14 @@ class Controller:
         self.mac_parser = manuf.MacParser(update=False)
 
     def check_if_record_exists(self, ip, mac):
+        """
+        Why should we use record.setGenerated('id', False) ?
+        Because we're using Sqlite auto incremented primary key; the database itself will provide that value.
+        If we don't set it to False, all the fields turn up empty.
+        https://stackoverflow.com/a/42319334/6743356
+        The caller should remember to set the generated flag to FALSE for fields where the database is meant to supply the value,
+         such as an automatically incremented ID.
+        """
 
         if not ([i for i in range(self.model.table_view_model.rowCount())
                 if ip == (self.model.table_view_model.record(i).value('ip_address'))]):
@@ -47,6 +59,7 @@ class Controller:
             record.setValue('oui', oui)
             record.setGenerated('id', False)
             self.model.table_view_model.insertRecord(-1, record)
+            self.send_ip_signal.emit(ip)
 
         else:
             for i in range(self.model.table_view_model.rowCount()):
@@ -54,20 +67,13 @@ class Controller:
                         and mac != (self.model.table_view_model.record(i).value('mac_address'))):
 
                     print("Updating MAC address for host {} with new value {}".format(ip, mac))
+                    record = self.model.table_view_model.record()
                     oui = self.mac_parser.get_manuf_long(mac)
                     record = self.model.table_view_model.record(i)
                     record.setValue('mac_address', mac)
                     record.setValue('oui', oui)
                     self.model.table_view_model.setRecord(i, record)
-
-    '''
-    Why should we use record.setGenerated('id', False) ?
-    Because we're using Sqlite auto incremented primary key; the database itself will provide that value.
-    If we don't set it to False, all the fields turn up empty.
-    https://stackoverflow.com/a/42319334/6743356
-    The caller should remember to set the generated flag to FALSE for fields where the database is meant to supply the value,
-     such as an automatically incremented ID.
-    '''
+                    self.send_ip_signal.emit(ip)
 
     # def add_record_to_db(self, ip, mac):
     #     print("Adding IP {} and MAC {} to db".format(ip, mac))
@@ -109,6 +115,12 @@ class Controller:
         print("Received data {} and {}".format(data1, data2))
         # self.model.host_list = data
 
+    def debug_fqdn(self, ip, fqdn):
+        print("Received IP {} and FQDN {}".format(ip, fqdn))
+
+    def debug_signal(self, signal):
+        print("Received signal {}".format(signal))
+
     def start_scapy_sniffer_thread(self):
         self.scapy_sniffer_worker = ScapyArpSnifferWorker()
         self.scapy_sniffer_thread = QThread()
@@ -133,6 +145,17 @@ class Controller:
             self.query_thread.started.connect(self.query_worker.task)
             self.view.worker_connections()
             self.query_thread.start()
+
+    def start_fqdn_thread(self):
+        self.fqdn_worker = FqdnWorker()
+        self.fqdn_thread = QThread()
+        self.fqdn_worker.moveToThread(self.fqdn_thread)
+        # self.fqdn_thread.started.connect(self.fqdn_worker.task) # Don't start it yet
+        # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
+        # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
+        self.fqdn_worker.send_fqdn_signal.connect(self.debug_fqdn)
+        self.send_ip_signal.connect(self.fqdn_worker.task)
+        self.fqdn_thread.start()
 
     def stop_scapy_query(self):
 
