@@ -88,12 +88,6 @@ class Controller(QObject):
                 argument2 (str): e.g. 'fritz.box'
         """
         print("Adding FQDN {} for host {} to db".format(fqdn, ip))
-        # for i in range(self.model.table_view_model.rowCount()):
-        #     if ip == (self.model.table_view_model.record(i).value('ip_address')):
-        #         if not(self.model.table_view_model.record(i).value('computer_name')):
-        #             record = self.model.table_view_model.record(i)
-        #             record.setValue('computer_name', fqdn)
-        #             self.model.table_view_model.setRecord(i, record)
         if ip == fqdn:
             '''Some computers/devices don't have a network name. 
             In that case, getfqdn() returns the IP as the FQDN value. Therefore, let's ignore it.'''
@@ -107,23 +101,6 @@ class Controller(QObject):
                 self.model.table_view_model.select()
             else:
                 print(query.lastError().text())
-
-
-        # if ([((record = self.model.table_view_model.setRecord(i).setValue('computer_name', fqdn)), self.model.table_view_model.record(i, record))
-        #                                             )) for i in range(self.model.table_view_model.rowCount())
-        #         if not (self.model.table_view_model.record(i).value('computer_name'))]):
-        #     print("Can't find record {} for IP {}".format(fqdn, ip))
-        #
-        # else:
-        #     print("Found record {} for IP {}".format(fqdn, ip))
-
-    # def add_record_to_db(self, ip, mac):
-    #     print("Adding IP {} and MAC {} to db".format(ip, mac))
-    #     record = self.table_view_model.record()
-    #     record.setValue('ip_address', ip)
-    #     record.setValue('mac_address', mac)
-    #     record.setGenerated('id', False)
-    #     self.table_view_model.insertRecord(-1, record)
 
     def get_selected_interface_info(self):
         self.my_mac = get_mac(self.selected_interface)
