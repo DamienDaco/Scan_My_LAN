@@ -14,9 +14,14 @@ class Controller(QObject):
     def __init__(self, view, model):
         super().__init__()
 
-        self.default_interface = get_default_interface()
+        self.default_interface = conf.iface
         self.selected_interface = self.default_interface
-        self.interface_list = get_interfaces_with_scapy()
+        self.scapy_interface_list = MyScapy.get_interfaces()
+        self.netifaces_interface_list = MyNetifaces.get_interfaces()
+        '''
+        In Windows, netifaces.interfaces() returns a list of strings like {83E826B5-9536-11E9-8A28-806E6F6E6963}
+        We need those values to extract IPs and MACs from specific interfaces later.        
+        '''
         self.model = model
         self.view = view
         self.view.set_controller(self)
@@ -103,12 +108,14 @@ class Controller(QObject):
                 print(query.lastError().text())
 
     def get_selected_interface_info(self):
-        self.my_mac = get_mac(self.selected_interface)
-        self.my_ip = get_host_ip(self.selected_interface)
-        self.my_mask = get_host_mask(self.selected_interface)
-
+        idx = self.view.ui.interface_box.currentIndex()
+        self.my_mac = MyNetifaces.get_mac(self.netifaces_interface_list[idx])
+        self.my_ip = MyNetifaces.get_ip_from_interface(self.netifaces_interface_list[idx])
+        self.my_mask = MyNetifaces.get_host_mask(self.netifaces_interface_list[idx])
         self.hex_mac = hex_mac(self.my_mac)
         self.decimal_ip = decimal_ip(self.my_ip)
+        self.selected_interface = self.scapy_interface_list[idx]
+        self.print_selected_interface()
 
     def print_selected_interface(self):
         print("Your current interface is {}, your IP is {}, your mask is {} and your MAC is {}".format(
@@ -118,15 +125,15 @@ class Controller(QObject):
         calc_range(self.my_ip, self.my_mask)
 
     def update_interface_box(self):
-        iface = self.default_interface
-        iface_list = self.interface_list
+        iface = self.scapy_interface_list[0]
+        iface_list = self.scapy_interface_list
         return iface, iface_list
 
-    def update_selected_interface(self):
-        idx = self.view.ui.interface_box.currentIndex()
-        self.selected_interface = get_interfaces()[idx]
-        self.get_selected_interface_info()
-        self.print_selected_interface()
+    # def update_selected_interface(self):
+    #     idx = self.view.ui.interface_box.currentIndex()
+    #     self.selected_interface = get_interfaces()[idx]
+    #     self.get_selected_interface_info()
+    #     self.print_selected_interface()
 
     # @pyqtSlot(list) # <--- Do not use a pyqtSlot here, it breaks the connection
     # See https://stackoverflow.com/questions/40674940/why-does-pyqtslot-decorator-cause-typeerror-connect-failed

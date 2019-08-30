@@ -1,57 +1,102 @@
 from socket import *
-import scapy.all as scapy
+from scapy.all import *
 import binascii, struct, sys, re, netifaces
 
 
-def get_default_interface():
-    # Let's get our default interface, by getting the device used by the default IPv4 route.
-    default_interface = netifaces.gateways()['default'][netifaces.AF_INET][1]
-    return default_interface
+class MyNetifaces:
+    """
+    I made this class to simplify Netifaces management, but also to clearly separate from Scapy functions.
+    For the time being, I'm forced to use both Scapy and Netifaces. This can create confusion with similar functions.
+    See Netifaces documentation for details.
+    """
+
+    @staticmethod
+    def get_default_interface():
+        # Let's get our default interface, by getting the device used by the default IPv4 route.
+        return netifaces.gateways()['default'][netifaces.AF_INET][1]
+
+    @staticmethod
+    def get_mac(interface):
+        """
+        :param interface: String (Interface name extracted with Scapy)
+        """
+        return netifaces.ifaddresses(interface)[netifaces.AF_LINK][0]['addr']
+
+    @staticmethod
+    def get_ip_from_interface(interface):
+
+        return netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
+
+    @staticmethod
+    def get_default_ip():
+        default_if = netifaces.gateways()['default'][netifaces.AF_INET][1]
+        return netifaces.ifaddresses(default_if)[netifaces.AF_INET][0]['addr']
+
+    @staticmethod
+    def get_host_mask(interface):
+
+        return netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['netmask']
+
+    @staticmethod
+    def get_gateway():
+
+        return netifaces.gateways()['default'][netifaces.AF_INET][0]
+
+    @staticmethod
+    def get_interfaces():
+        # This produces horrible results under Windows (A list of GUIDs)
+        # Works fine with Linux
+        return netifaces.interfaces()
 
 
-def get_mac(interface):
+class MyScapy:
+    """
+    I made this class to regroup and simplify my Scapy functions, but also to separate them from Netifaces.
+    See Scapy documentation for details.
+    """
 
-    addrs = netifaces.ifaddresses(interface)
-    mac = addrs[netifaces.AF_LINK][0]['addr']
-    return mac
+    @staticmethod
+    def get_default_mac():
+        """
+        Get MAC from default interface
+        """
+        return get_if_hwaddr(conf.iface)
 
+    @staticmethod
+    def get_mac_from_interface(interface):
+        """
+        STILL BUGGED, DO NOT USE
+        """
+        return get_if_hwaddr(interface)
 
-def get_mac_from_scapy(interface):
+    @staticmethod
+    def get_default_ip():
+        """
+        Get default IP address
+        """
+        return get_if_addr(conf.iface)
 
-    return scapy.get_if_hwaddr(interface)
+    @staticmethod
+    def get_ip_from_interface(interface):
+        """
+        STILL BUGGED, DO NOT USE
+        """
+        return get_if_addr(interface)
 
+    @staticmethod
+    def get_interfaces():
+        """
+        Works with Windows :)
+        Outputs a list of strings
+        Let's extract only the adapter names
+        We can use this list to populate some gui widgets
+        """
+        lod = get_windows_if_list()
+        return [i.get('name') for i in lod]
 
-def get_host_ip(interface):
-
-    ip = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['addr']
-    return ip
-
-
-def get_host_mask(interface):
-
-    mask = netifaces.ifaddresses(interface)[netifaces.AF_INET][0]['netmask']
-    return mask
-
-
-def get_gateway():
-
-    gateway = netifaces.gateways()['default'][netifaces.AF_INET][0]
-    return gateway
-
-
-def get_interfaces():
-    # This produces horrible results under Windows (A list of GUIDs)
-    # Works fine with Linux
-    interface_list = netifaces.interfaces()
-    return interface_list
-
-
-def get_interfaces_with_scapy():
-    # Works with Windows
-    # Outputs a list of dictionaries
-    # Let's extract only the adapter names
-    lod = scapy.get_windows_if_list()
-    return [i.get('name') for i in lod]
+    @staticmethod
+    def get_default_interface_name():
+        return get_windows_if_list()[0]["name"]
 
 
 def hex_mac(mac):

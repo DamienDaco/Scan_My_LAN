@@ -20,6 +20,8 @@ class Model:
         self.db_table = 'live_hosts'
 
         self.query = QSqlQuery()
+        if not self.query.exec_("DROP TABLE IF EXISTS live_hosts"):
+            print(self.query.lastError().text())
         if not self.query.exec_("CREATE TABLE IF NOT EXISTS live_hosts(id INTEGER PRIMARY KEY,"
                                 "ip_address TEXT NOT NULL UNIQUE, "
                                 "mac_address TEXT NOT NULL, oui TEXT, status TEXT,"
