@@ -38,5 +38,8 @@ class Model:
         self.table_view_model.setHeaderData(6, Qt.Horizontal, "User Text")
         self.table_view_model.select()
 
+        self.proxy_model = CustomSortingModel()
+        self.proxy_model.setSourceModel(self.table_view_model)
+
 
 

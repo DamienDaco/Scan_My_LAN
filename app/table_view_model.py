@@ -3,6 +3,30 @@ from PyQt5.QtSql import *
 from PyQt5.QtGui import *
 
 
+class CustomSortingModel(QSortFilterProxyModel):
+    """
+    Custon proxy model between view and model to sort IP addresses by their int (numerical) value.
+    lessThan() will override the sorting function in QSortFilterProxyModel.
+    Allows to sort IP addresses which were strings ('192.168.1.1') by their numerical value.
+    In this example, col == 1 because this is my column for IP addresses in my model.
+    int(dataleft.split('.')[0]).... etc: This will create a tuple of four octets, e.g. (192, 168, 1, 1)
+    These tuples of octets will be sorted by numerical value.
+    """
+    def lessThan(self, left, right):
+
+        col = left.column()
+
+        left_data = left.data()
+        right_data = right.data()
+        if left_data and right_data:  # Important: Check if the string is not empty before using it
+            if col == 1:  # Column for IP addresses in my model
+                left_data = (int(left_data.split('.')[0]), int(left_data.split('.')[1]), int(left_data.split('.')[2]),
+                             int(left_data.split('.')[3]))
+                right_data = (int(right_data.split('.')[0]), int(right_data.split('.')[1]), int(right_data.split('.')[2]),
+                              int(right_data.split('.')[3]))
+        return left_data < right_data
+
+
 class MySqlTableModel(QSqlTableModel):
     def __init__(self):
         super(MySqlTableModel, self).__init__()
@@ -53,12 +77,3 @@ class MyTableModel(QAbstractTableModel):
 
     def flags(self, index):
         return Qt.ItemIsEnabled
-
-    # def sort(self, Ncol, order):
-    #     """Sort table by given column number.
-    #     """
-    #     self.emit(SIGNAL("layoutAboutToBeChanged()"))
-    #     self.arraydata = sorted(self.arraydata, key=operator.itemgetter(Ncol))
-    #     if order == Qt.DescendingOrder:
-    #         self.arraydata.reverse()
-    #     self.emit(SIGNAL("layoutChanged()"))

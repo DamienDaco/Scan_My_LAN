@@ -37,9 +37,11 @@ class Controller(QObject):
         self.start_scapy_sniffer_thread()
         self.start_fqdn_thread()
 
-        self.view.ui.table_view.setModel(self.model.table_view_model)
+        self.view.ui.table_view.setModel(self.model.proxy_model)
         self.view.ui.table_view.setColumnHidden(0, True)  # Hides the id column
-        self.view.ui.table_view.setEditTriggers(QAbstractItemView.NoEditTriggers) # Set table view to read only
+        self.view.ui.table_view.setSortingEnabled(True)
+        self.view.ui.table_view.sortByColumn(1, Qt.AscendingOrder)  # Use column 1 (IP addresses) to sort
+        self.view.ui.table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Set table view to read only
 
         self.mac_parser = manuf.MacParser(update=False)
 
