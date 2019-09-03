@@ -8,7 +8,6 @@ from app.view import *
 
 
 class Controller(QObject):
-    send_ip_signal = pyqtSignal(str)
 
     def __init__(self, view, model):
         super().__init__()
@@ -115,7 +114,7 @@ class Controller(QObject):
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
         self.fqdn_worker.send_fqdn_signal.connect(self.model.add_fqdn_to_db)
-        self.send_ip_signal.connect(self.fqdn_worker.task)
+        self.model.send_ip_signal.connect(self.fqdn_worker.task)
         self.fqdn_thread.start()
 
     def stop_scapy_query(self):
