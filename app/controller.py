@@ -5,7 +5,6 @@ from PyQt5.QtCore import *
 from app.table_view_model import *
 from app.scapy_tools import *
 from app.view import *
-from manuf import manuf
 
 
 class Controller(QObject):
@@ -42,72 +41,6 @@ class Controller(QObject):
         self.view.ui.table_view.setSortingEnabled(True)
         self.view.ui.table_view.sortByColumn(1, Qt.AscendingOrder)  # Use column 1 (IP addresses) to sort
         self.view.ui.table_view.setEditTriggers(QAbstractItemView.NoEditTriggers)  # Set table view to read only
-
-        self.mac_parser = manuf.MacParser(update=False)
-
-    def add_ip_mac_in_db(self, ip, mac):
-        """
-        Parameters:
-        argument1 (str): e.g. '192.168.1.1'
-
-        argument2 (str): e.g. '11:22:33:AA:BB:CC'
-
-        Why should we use record.setGenerated('id', False) ?
-        Because we're using Sqlite auto incremented primary key; the database itself will provide that value.
-        If we don't set it to False, all the fields turn up empty.
-        https://stackoverflow.com/a/42319334/6743356
-        The caller should remember to set the generated flag to FALSE for fields where the database is meant to supply the value,
-         such as an automatically incremented ID.
-        """
-
-        if not ([i for i in range(self.model.table_view_model.rowCount())
-                if ip == (self.model.table_view_model.record(i).value('ip_address'))]):
-            print("Could not find record {} in db".format(ip))
-            print("Adding IP {} and MAC {} to db".format(ip, mac))
-            oui = self.mac_parser.get_manuf_long(mac)
-            record = self.model.table_view_model.record()
-            record.setValue('ip_address', ip)
-            record.setValue('mac_address', mac)
-            record.setValue('oui', oui)
-            record.setGenerated('id', False)
-            self.model.table_view_model.insertRecord(-1, record)
-            self.send_ip_signal.emit(ip)
-
-        else:
-            for i in range(self.model.table_view_model.rowCount()):
-                if (ip == (self.model.table_view_model.record(i).value('ip_address'))
-                        and mac != (self.model.table_view_model.record(i).value('mac_address'))):
-
-                    print("Updating MAC address for host {} with new value {}".format(ip, mac))
-                    # record = self.model.table_view_model.record()
-                    oui = self.mac_parser.get_manuf_long(mac)
-                    record = self.model.table_view_model.record(i)
-                    record.setValue('mac_address', mac)
-                    record.setValue('oui', oui)
-                    self.model.table_view_model.setRecord(i, record)
-                    self.send_ip_signal.emit(ip)
-
-    def add_fqdn_to_db(self, ip, fqdn):
-        """
-                Parameters:
-                argument1 (str): e.g. '192.168.1.1'
-
-                argument2 (str): e.g. 'fritz.box'
-        """
-        print("Adding FQDN {} for host {} to db".format(fqdn, ip))
-        if ip == fqdn:
-            '''Some computers/devices don't have a network name. 
-            In that case, getfqdn() returns the IP as the FQDN value. Therefore, let's ignore it.'''
-            pass
-        else:
-            query = QSqlQuery()
-            query.prepare("UPDATE live_hosts SET computer_name = :fqdn WHERE ip_address = :ip")
-            query.bindValue(":fqdn", fqdn)
-            query.bindValue(":ip", ip)
-            if query.exec_():
-                self.model.table_view_model.select()
-            else:
-                print(query.lastError().text())
 
     def get_selected_interface_info(self):
         idx = self.view.ui.interface_box.currentIndex()
@@ -155,7 +88,7 @@ class Controller(QObject):
         self.scapy_sniffer_thread_list.append((self.scapy_sniffer_worker, self.scapy_sniffer_thread))
         self.scapy_sniffer_worker.moveToThread(self.scapy_sniffer_thread)
         self.scapy_sniffer_worker.finished.connect(self.scapy_sniffer_thread.quit)
-        self.scapy_sniffer_worker.send_list_signal.connect(self.add_ip_mac_in_db)
+        self.scapy_sniffer_worker.send_list_signal.connect(self.model.add_ip_mac_in_db)
         self.scapy_sniffer_thread.started.connect(self.scapy_sniffer_worker.task)
         self.scapy_sniffer_thread.start()
 
@@ -181,7 +114,7 @@ class Controller(QObject):
         # self.fqdn_thread.started.connect(self.fqdn_worker.task) # Don't start it yet
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
         # self.scapy_sniffer_worker.send_ip_signal.connect(self.fqdn_worker.task)
-        self.fqdn_worker.send_fqdn_signal.connect(self.add_fqdn_to_db)
+        self.fqdn_worker.send_fqdn_signal.connect(self.model.add_fqdn_to_db)
         self.send_ip_signal.connect(self.fqdn_worker.task)
         self.fqdn_thread.start()
 

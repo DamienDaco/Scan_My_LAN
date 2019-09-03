@@ -78,7 +78,7 @@ class ScapyArpQueryWorker(QObject):
             dotted_ip = integer_to_dotted_decimal_ip(i)
             print("Sending packet to", dotted_ip)
             self.str_signal.emit(dotted_ip)
-            pkt = sendp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=dotted_ip), verbose=True)
+            pkt = sendp(Ether(dst="ff:ff:ff:ff:ff:ff")/ARP(pdst=dotted_ip), verbose=False)
             # if pkt[0][0][1]:
             #     print("{} is at {}".format(dotted_ip, pkt[0][0][1].hwsrc))
             QThread.msleep(10)

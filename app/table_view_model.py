@@ -30,7 +30,7 @@ class CustomSortingModel(QSortFilterProxyModel):
 class MySqlTableModel(QSqlTableModel):
     def __init__(self):
         super(MySqlTableModel, self).__init__()
-        self.setEditStrategy(QSqlTableModel.OnFieldChange)
+        self.setEditStrategy(QSqlTableModel.OnManualSubmit)
 
     def info(self):
         print("-> info")
